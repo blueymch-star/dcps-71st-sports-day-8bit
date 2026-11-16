@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>71大庄校慶運動會 - DAZHUANG 71st SPORTS DAY QUEST</title>
+  <!-- 引入 Tailwind CSS 與復古像素英文字體 Press Start 2P + 繁體中文像素字體 DotGothic16 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================
+       核心像素字體與街機視覺樣式設計
+       ========================================= */
+    :root {
+      --track-red: #d93829;
+      --track-dark: #9e2216;
+      --grass-green: #2d8a3e;
+      --grass-dark: #1c5c28;
+      --gold: #ffcc00;
+      --gold-dark: #b38f00;
+      --arcade-bg: #11161d;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #090c10;
+      background-image: 
+        radial-gradient(circle at 50% 50%, #1a2433 0%, #090c10 100%);
+      font-family: 'DotGothic16', sans-serif;
+      color: #ffffff;
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .font-pixel-en {
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    .font-pixel-zh {
+      font-family: 'DotGothic16', sans-serif;
+    }
+
+    /* 9:16 街機直式螢幕外框 */
+    #arcade-cabinet {
+      position: relative;
+      height: 100dvh;
+      max-height: 860px;
+      aspect-ratio: 9 / 16;
+      max-width: 100vw;
+      background-color: var(--arcade-bg);
+      border: 4px solid #374151;
+      border-radius: 18px;
+      box-shadow: 
+        0 0 0 4px #1f2937,
+        0 20px 50px rgba(0, 0, 0, 0.85),
+        0 0 30px rgba(255, 204, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 500px) {
+      #arcade-cabinet {
+        border-radius: 0;
+        border: none;
+        width: 100vw;
+        height: 100dvh;
+        max-height: none;
+      }
+    }
+
+    /* 像素邊框與立體街機按鈕 */
+    .pixel-box {
+      background: rgba(17, 24, 39, 0.92);
+      border: 3px solid #ffffff;
+      box-shadow: 
+        inset -3px -3px 0px rgba(0, 0, 0, 0.6),
+        inset 3px 3px 0px rgba(255, 255, 255, 0.2),
+        0 4px 0 #000000;
+      border-radius: 6px;
+    }
+
+    .pixel-box-gold {
+      background: rgba(24, 20, 10, 0.95);
+      border: 3px solid var(--gold);
+      box-shadow: 
+        inset -3px -3px 0px rgba(179, 143, 0, 0.4),
+        0 4px 0 #000000;
+      border-radius: 6px;
+    }
+
+    .arcade-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 3px solid #ffffff;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.08s ease, filter 0.1s ease;
+      box-shadow: 0 5px 0 #000000, inset 0 3px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .arcade-btn:active, .arcade-btn.pressed {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #000000;
+    }
+
+    .btn-red { background-color: #e03c28; color: #fff; }
+    .btn-green { background-color: #2ea843; color: #fff; }
+    .btn-gold { background-color: #f5b800; color: #111827; }
+    .btn-blue { background-color: #2563eb; color: #fff; }
+
+    /* 街機圓形按鍵徽章 (A / B / V) */
+    .key-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      border: 2px solid #111;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3);
+    }
+
+    /* CRT 掃描線特效層 */
+    .crt-overlay {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.28) 50%
+      ), linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.04),
+        rgba(0, 255, 0, 0.01),
+        rgba(0, 0, 255, 0.04)
+      );
+      background-size: 100% 4px, 6px 100%;
+    }
+
+    .crt-off {
+      display: none !important;
+    }
+
+    /* 閃爍與彈跳動畫 */
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.2; }
+    }
+    .animate-pixel-blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatY 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulseScale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .animate-pulse-fast {
+      animation: pulseScale 0.45s ease-in-out infinite;
+    }
+
+    /* 舞台場景切換控制 */
+    .screen-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      transition: opacity 0.25s ease;
+    }
+    .screen-hidden {
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* 像素畫布渲染最佳化 */
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 9:16 街機直式主機外殼 -->
+  <div id="arcade-cabinet">
+    
+    <!-- 頂部狀態列：音量、CRT開關、Auto-Play 錄影指示燈 -->
+    <header class="relative z-40 flex items-center justify-between px-3 py-2 bg-gray-900/95 border-b-2 border-gray-700 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+        <span class="font-pixel-en text-[10px] text-yellow-400 tracking-wider">71st DAZHUANG • 115/12/12</span>
+      </div>
+
+      <!-- 導演自動演繹模式狀態徽章 -->
+      <div id="autoplay-badge" class="hidden items-center gap-1.5 px-2 py-0.5 bg-red-600 text-white rounded border border-white text-[10px] font-bold animate-pulse">
+        <span>● REC / AUTO</span>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button id="btn-home" title="回到首頁" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 border border-gray-500 rounded text-[11px] text-gray-200">
+          ⌂
+        </button>
+        <button id="btn-crt" title="切換 CRT 掃描線" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 border border-gray-500 rounded font-pixel-en text-[9px] text-green-400">
+          CRT:ON
+        </button>
+        <button id="btn-sound" title="靜音切換" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 border border-gray-500 rounded text-[11px] text-yellow-300">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- 主遊戲顯示區域 -->
+    <main class="relative flex-1 w-full h-full overflow-hidden">
+
+      <!-- =========================================================
+           畫面 1：開場主畫面 (Title Screen)
+           ========================================================= -->
+      <section id="screen-title" class="screen-layer justify-between p-5 bg-gradient-to-b from-sky-900 via-emerald-900 to-red-950">
+        <!-- 背景裝飾 Canvas (動態像素雲朵與跑道) -->
+        <canvas id="canvas-title-bg" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+        <!-- 頂部校徽與主題標語 -->
+        <div class="relative z-10 flex flex-col items-center mt-3 text-center">
+          <div class="px-3 py-1 mb-2.5 bg-yellow-400 text-gray-900 font-pixel-en text-[10px] rounded border-2 border-white shadow">
+            ★ DAZHUANG 71st ANNIVERSARY ★
+          </div>
+          
+          <!-- 像素聖火與頒獎台 SVG 圖示 -->
+          <div class="w-20 h-20 mb-1.5 flex items-center justify-center animate-float">
+            <svg viewBox="0 0 32 32" class="w-full h-full drop-shadow-[0_6px_0_rgba(0,0,0,0.8)]" shape-rendering="crispEdges">
+              <!-- 火焰 -->
+              <rect x="14" y="2" width="4" height="3" fill="#ff3b30"/>
+              <rect x="12" y="5" width="8" height="4" fill="#ff9500"/>
+              <rect x="13" y="6" width="6" height="4" fill="#ffcc00"/>
+              <rect x="15" y="7" width="2" height="3" fill="#ffffff"/>
+              <!-- 火炬杯身 -->
+              <rect x="11" y="10" width="10" height="3" fill="#fbbf24"/>
+              <rect x="12" y="13" width="8" height="3" fill="#d97706"/>
+              <rect x="14" y="16" width="4" height="9" fill="#9ca3af"/>
+              <rect x="15" y="16" width="2" height="9" fill="#e5e7eb"/>
+              <!-- 頒獎台底座 -->
+              <rect x="4" y="25" width="8" height="5" fill="#3b82f6"/>
+              <rect x="12" y="23" width="8" height="7" fill="#ef4444"/>
+              <rect x="20" y="26" width="8" height="4" fill="#10b981"/>
+              <rect x="15" y="25" width="2" height="3" fill="#ffcc00"/>
+            </svg>
+          </div>
+
+          <!-- 主標題 -->
+          <div class="font-pixel-en text-xs text-yellow-300 tracking-widest mb-1 drop-shadow">
+            DAZHUANG QUEST
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-yellow-400 leading-tight tracking-wider drop-shadow-[0_4px_0_#991b1b]">
+            71大庄校慶運動會
+          </h1>
+          <div class="mt-2 px-4 py-1 bg-red-700/95 border-2 border-yellow-300 rounded text-sm sm:text-base font-bold tracking-widest text-white shadow-md">
+            115/12/12 邁向榮耀巔峰
+          </div>
+          <p class="mt-2 font-pixel-en text-[10px] text-emerald-300">
+            SAVE DATA •(30 CLASSES)
+          </p>
+        </div>
+
+        <!-- 中央操作選單 -->
+        <div class="relative z-10 flex flex-col gap-3 w-full max-w-[300px] mx-auto my-auto">
+          <button id="btn-start-manual" class="arcade-btn btn-gold py-3.5 px-4 text-base sm:text-lg tracking-wider">
+            <span class="key-badge bg-white text-red-600">A</span>
+            <span>START GAME</span>
+          </button>
+
+          <button id="btn-start-auto" class="arcade-btn btn-green py-3 px-4 text-sm sm:text-base tracking-wide">
+            <span class="key-badge bg-yellow-300 text-gray-900">▶</span>
+            <span>AUTO PLAY </span>
+          </button>
+        </div>
+
+        <!-- 底部街機投幣閃爍字樣 -->
+        <div class="relative z-10 text-center pb-1">
+          <p class="font-pixel-en text-[11px] text-yellow-300 animate-pixel-blink">
+            115.12.12 READY TO START
+          </p>
+          <p class="text-[11px] text-gray-300 mt-1">
+            支援觸控點擊 / 電腦鍵盤 A・B・V・Enter
+          </p>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           畫面 2：運動會歷史與關卡地圖 (Stage Map)
+           ========================================================= -->
+      <section id="screen-map" class="screen-layer screen-hidden bg-[#1b4d2b] overflow-hidden">
+        <!-- 可縮放地圖圖層（點擊建築物時平滑放大聚焦） -->
+        <div id="map-zoom-layer" class="relative w-full h-full flex flex-col justify-between transition-transform duration-500 ease-out origin-center">
+          <!-- 地圖 Canvas -->
+          <canvas id="canvas-map" class="absolute inset-0 w-full h-full"></canvas>
+
+          <!-- 頂部地圖標題提示 -->
+          <div class="relative z-10 p-3 flex flex-col items-center pointer-events-none">
+            <div class="pixel-box-gold px-4 py-1.5 text-center">
+              <div class="font-pixel-en text-[10px] text-yellow-400">71st DAZHUANG QUEST MAP</div>
+              <div class="text-sm font-bold text-white">點擊歷屆賽事回顧 或 挑戰 115/12/12 盛會</div>
+            </div>
+          </div>
+
+          <!-- 地圖互動節點按鈕覆蓋層 -->
+          <div class="relative z-10 flex-1 w-full">
+            <!-- 節點 1：69週年 紅白大對抗（8-bit 體育館） -->
+            <button id="map-node-hist69" data-node="hist69" class="map-node absolute left-[10%] bottom-[13%] flex flex-col items-center group">
+              <div class="drop-shadow-[0_4px_0_#000] group-hover:scale-110 transition-transform">
+                <svg width="72" height="58" viewBox="0 0 36 29" shape-rendering="crispEdges" aria-label="69週年體育館">
+                  <!-- 屋頂旗幟 -->
+                  <rect x="17" y="0" width="1" height="4" fill="#e2e8f0"/>
+                  <rect x="18" y="0" width="4" height="2" fill="#facc15"/>
+                  <!-- 體育館圓拱屋頂 -->
+                  <rect x="6" y="4" width="24" height="2" fill="#0f766e"/>
+                  <rect x="4" y="6" width="28" height="2" fill="#14b8a6"/>
+                  <rect x="2" y="8" width="32" height="3" fill="#0d9488"/>
+                  <rect x="2" y="11" width="32" height="1" fill="#facc15"/>
+                  <!-- 屋頂天窗高光 -->
+                  <rect x="8" y="6" width="4" height="1" fill="#99f6e4"/>
+                  <rect x="16" y="6" width="4" height="1" fill="#99f6e4"/>
+                  <rect x="24" y="6" width="4" height="1" fill="#99f6e4"/>
+                  <!-- 館身外牆與玻璃帷幕 -->
+                  <rect x="3" y="12" width="30" height="14" fill="#cbd5e1"/>
+                  <rect x="3" y="24" width="30" height="3" fill="#64748b"/>
+                  <!-- 左側窗格 -->
+                  <rect x="5" y="14" width="6" height="6" fill="#38bdf8"/>
+                  <rect x="7" y="14" width="1" height="6" fill="#e0f2fe"/>
+                  <!-- 右側窗格 -->
+                  <rect x="25" y="14" width="6" height="6" fill="#38bdf8"/>
+                  <rect x="27" y="14" width="1" height="6" fill="#e0f2fe"/>
+                  <!-- 中央入口大門與紅白對抗旗 -->
+                  <rect x="13" y="13" width="10" height="3" fill="#1e293b"/>
+                  <rect x="14" y="14" width="4" height="1" fill="#ef4444"/>
+                  <rect x="18" y="14" width="4" height="1" fill="#ffffff"/>
+                  <rect x="14" y="17" width="8" height="10" fill="#1e293b"/>
+                  <rect x="15" y="18" width="2" height="9" fill="#f59e0b"/>
+                  <rect x="19" y="18" width="2" height="9" fill="#f59e0b"/>
+                  <!-- 階梯底座 -->
+                  <rect x="1" y="27" width="34" height="2" fill="#475569"/>
+                </svg>
+              </div>
+              <span class="mt-0.5 px-2 py-0.5 bg-black/90 border border-yellow-400 rounded text-[11px] font-bold text-yellow-300 shadow">
+                69週年 紅白大對抗
+              </span>
+            </button>
+
+            <!-- 節點 2：70週年 庄情薪傳接力賽（8-bit 紫色跑道體育場） -->
+            <button id="map-node-hist70" data-node="hist70" class="map-node absolute right-[8%] bottom-[32%] flex flex-col items-center group">
+              <div class="drop-shadow-[0_4px_0_#000] group-hover:scale-110 transition-transform">
+                <svg width="84" height="60" viewBox="0 0 42 30" shape-rendering="crispEdges" aria-label="70週年紫色跑道體育場">
+                  <!-- 體育場旗幟 -->
+                  <rect x="20" y="0" width="1" height="4" fill="#e2e8f0"/>
+                  <rect x="21" y="0" width="5" height="2" fill="#facc15"/>
+                  <!-- 觀眾席外牆 -->
+                  <rect x="6" y="4" width="30" height="2" fill="#94a3b8"/>
+                  <rect x="3" y="6" width="36" height="3" fill="#64748b"/>
+                  <rect x="1" y="9" width="40" height="15" fill="#475569"/>
+                  <rect x="3" y="24" width="36" height="3" fill="#334155"/>
+                  <rect x="6" y="27" width="30" height="2" fill="#1e293b"/>
+                  <!-- 觀眾席像素點綴 -->
+                  <rect x="8" y="7" width="2" height="1" fill="#facc15"/>
+                  <rect x="13" y="7" width="2" height="1" fill="#f87171"/>
+                  <rect x="19" y="7" width="2" height="1" fill="#38bdf8"/>
+                  <rect x="25" y="7" width="2" height="1" fill="#facc15"/>
+                  <rect x="31" y="7" width="2" height="1" fill="#a855f7"/>
+                  <!-- 紫色跑道外圈 -->
+                  <rect x="5" y="10" width="32" height="13" fill="#7e22ce"/>
+                  <rect x="4" y="12" width="34" height="9" fill="#9333ea"/>
+                  <!-- 跑道白色分道線 -->
+                  <rect x="6" y="11" width="30" height="1" fill="#f3e8ff"/>
+                  <rect x="6" y="21" width="30" height="1" fill="#f3e8ff"/>
+                  <rect x="5" y="13" width="1" height="7" fill="#f3e8ff"/>
+                  <rect x="36" y="13" width="1" height="7" fill="#f3e8ff"/>
+                  <!-- 中央草地內場 -->
+                  <rect x="9" y="13" width="24" height="7" fill="#16a34a"/>
+                  <rect x="10" y="14" width="22" height="5" fill="#22c55e"/>
+                  <rect x="20" y="13" width="1" height="7" fill="#dcfce7"/>
+                  <rect x="18" y="15" width="5" height="3" fill="none" stroke="#dcfce7" stroke-width="0.6"/>
+                </svg>
+              </div>
+              <span class="mt-0.5 px-2 py-0.5 bg-black/90 border border-yellow-400 rounded text-[11px] font-bold text-yellow-300 shadow">
+                70週年 庄情薪傳接力賽
+              </span>
+            </button>
+
+            <!-- 地圖選擇游標與 REPLAY 提示 (參照街機選關卡風格) -->
+            <div id="map-replay-cue" class="hidden absolute z-20 pointer-events-none flex items-center gap-1.5 px-2.5 py-1 bg-black/90 border-2 border-yellow-300 rounded shadow-[0_3px_0_#000] animate-bounce">
+              <span class="font-pixel-en text-xs text-yellow-300">▶</span>
+              <span class="font-pixel-en text-[10px] text-white">REPLAY</span>
+            </div>
+
+            <!-- 節點 3：115/12/12 71週年 五力飛揚（8-bit 藍色綜合球場：籃球場 + 網球場） -->
+            <button id="btn-map-2026" data-node="stage71" class="map-node absolute left-1/2 -translate-x-1/2 top-[11%] flex flex-col items-center animate-float group">
+              <div class="px-2.5 py-0.5 mb-1 bg-red-600 border border-white rounded font-pixel-en text-[9px] text-white animate-pulse">
+                115/12/12 ▼
+              </div>
+              <div class="p-1 rounded-xl bg-gray-900/95 border-2 border-yellow-300 shadow-[0_6px_0_#000] group-hover:scale-105 transition-transform">
+                <svg width="116" height="64" viewBox="0 0 58 32" shape-rendering="crispEdges" aria-label="71週年藍色綜合球場">
+                  <!-- 球場外圍基地與燈柱 -->
+                  <rect x="0" y="2" width="58" height="28" fill="#1e293b"/>
+                  <rect x="1" y="3" width="56" height="26" fill="#334155"/>
+                  <rect x="2" y="0" width="2" height="3" fill="#fde047"/>
+                  <rect x="54" y="0" width="2" height="3" fill="#fde047"/>
+                  <!-- 左半部：藍色籃球場 -->
+                  <rect x="3" y="5" width="25" height="22" fill="#1d4ed8"/>
+                  <rect x="4" y="6" width="23" height="20" fill="#2563eb"/>
+                  <!-- 籃球場邊線與中線 -->
+                  <rect x="4" y="6" width="23" height="1" fill="#ffffff"/>
+                  <rect x="4" y="25" width="23" height="1" fill="#ffffff"/>
+                  <rect x="4" y="6" width="1" height="20" fill="#ffffff"/>
+                  <rect x="26" y="6" width="1" height="20" fill="#ffffff"/>
+                  <rect x="15" y="6" width="1" height="20" fill="#ffffff"/>
+                  <!-- 籃球禁區與籃框 -->
+                  <rect x="5" y="13" width="5" height="6" fill="#f97316"/>
+                  <rect x="21" y="13" width="5" height="6" fill="#f97316"/>
+                  <rect x="4" y="15" width="2" height="2" fill="#fde047"/>
+                  <rect x="25" y="15" width="2" height="2" fill="#fde047"/>
+                  <!-- 中圈 -->
+                  <rect x="14" y="14" width="3" height="4" fill="#60a5fa"/>
+                  <!-- 中央分隔走道 -->
+                  <rect x="28" y="5" width="2" height="22" fill="#0f172a"/>
+                  <!-- 右半部：藍色網球場 -->
+                  <rect x="30" y="5" width="25" height="22" fill="#0369a1"/>
+                  <rect x="31" y="6" width="23" height="20" fill="#0284c7"/>
+                  <!-- 網球場邊線與發球區 -->
+                  <rect x="32" y="7" width="21" height="1" fill="#ffffff"/>
+                  <rect x="32" y="24" width="21" height="1" fill="#ffffff"/>
+                  <rect x="32" y="7" width="1" height="18" fill="#ffffff"/>
+                  <rect x="52" y="7" width="1" height="18" fill="#ffffff"/>
+                  <rect x="34" y="9" width="17" height="1" fill="#e0f2fe"/>
+                  <rect x="34" y="22" width="17" height="1" fill="#e0f2fe"/>
+                  <rect x="37" y="9" width="1" height="14" fill="#e0f2fe"/>
+                  <rect x="47" y="9" width="1" height="14" fill="#e0f2fe"/>
+                  <rect x="37" y="15" width="11" height="1" fill="#e0f2fe"/>
+                  <!-- 中央網球網 -->
+                  <rect x="42" y="6" width="1" height="20" fill="#f8fafc"/>
+                  <rect x="42" y="5" width="1" height="1" fill="#facc15"/>
+                  <rect x="42" y="26" width="1" height="1" fill="#facc15"/>
+                </svg>
+              </div>
+              <span class="mt-1.5 px-3 py-1 bg-gray-900/95 border-2 border-yellow-400 rounded text-xs font-bold text-white shadow">
+                71週年 五力飛揚
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 71週年 五力飛揚 建築物選單彈窗 (CLASS / LEVEL UP / CHALLENGE) -->
+        <div id="stage71-menu-modal" class="hidden absolute inset-0 z-30 bg-black/65 flex items-center justify-center p-4">
+          <div class="pixel-box-gold w-full max-w-[300px] p-4 flex flex-col gap-3 bg-[#0d1f15]/95">
+            <div class="flex items-center justify-between border-b-2 border-yellow-500/40 pb-2">
+              <div>
+                <div class="font-pixel-en text-[9px] text-yellow-400">115/12/12 • 71st MEET</div>
+                <div class="text-base font-bold text-white">71週年 五力飛揚</div>
+              </div>
+              <button id="btn-close-stage71-menu" class="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white text-xs rounded border border-white">✕</button>
+            </div>
+
+            <div class="flex flex-col gap-2.5">
+              <button id="cmd-stage71-class" class="arcade-btn btn-blue w-full py-2.5 px-3 justify-between text-left">
+                <span class="flex items-center gap-2">
+                  <span id="cursor-stage71-class" class="font-pixel-en text-xs text-yellow-300">▶</span>
+                  <span class="font-pixel-en text-xs sm:text-sm tracking-wide">CLASS</span>                 
+                </span>
+                <span id="check-stage71-class" class="font-pixel-en text-xs text-emerald-300 hidden">✓</span>
+              </button>
+
+              <button id="cmd-stage71-levelup" class="arcade-btn btn-green w-full py-2.5 px-3 justify-between text-left">
+                <span class="flex items-center gap-2">
+                  <span id="cursor-stage71-levelup" class="font-pixel-en text-xs text-yellow-300 opacity-0">▶</span>
+                  <span class="font-pixel-en text-xs sm:text-sm tracking-wide">LEVEL UP</span>
+                </span>
+                <span id="check-stage71-levelup" class="font-pixel-en text-xs text-yellow-300 hidden">✓</span>
+              </button>
+
+              <button id="cmd-stage71-challenge" class="arcade-btn btn-red w-full py-2.5 px-3 justify-between text-left">
+                <span class="flex items-center gap-2">
+                  <span id="cursor-stage71-challenge" class="font-pixel-en text-xs text-yellow-300 opacity-0">▶</span>
+                  <span class="font-pixel-en text-xs sm:text-sm tracking-wide">CHALLENGE</span>
+                </span>
+                <span class="font-pixel-en text-[10px] text-yellow-300">GO!</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 全螢幕復古回顧影片彈窗 (參照街機 REPLAY 風格) -->
+        <div id="retro-tv-modal" class="hidden absolute inset-0 z-30 bg-black flex flex-col items-center justify-center overflow-hidden">
+          <!-- 9:16 滿版回顧影片 -->
+          <video
+            id="replay-video"
+            class="w-full h-full object-cover"
+            width="720"
+            height="1280"
+            playsinline
+            preload="none"
+          ></video>
+
+          <!-- 左上角 REPLAY 徽章 -->
+          <div class="absolute top-3 left-3 z-40 flex items-center gap-1.5 bg-black/85 border-2 border-white px-2.5 py-1 rounded shadow-[0_3px_0_#000]">
+            <span class="font-pixel-en text-[9px] text-yellow-300 animate-pulse">▶ REPLAY</span>
+            <span id="replay-year-badge" class="font-pixel-en text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded">69</span>
+            <span id="replay-title-badge" class="text-xs font-bold text-white">紅白大對抗</span>
+          </div>
+
+          <!-- 右上角關閉/返回按鈕 -->
+          <button id="btn-close-tv" class="absolute top-3 right-3 z-40 px-2.5 py-1 bg-black/85 hover:bg-red-700 text-white text-xs font-bold rounded border-2 border-white shadow-[0_3px_0_#000]">
+            ✕ 返回
+          </button>
+
+          <!-- 影片播畢後浮現的三代榮耀獎盃框 (69 / 70 / 71) -->
+          <div id="replay-trophy-box" class="hidden absolute inset-0 z-40 bg-black/55 flex items-center justify-center p-4">
+            <div class="pixel-box-gold w-full max-w-[320px] p-4 flex flex-col items-center text-center bg-[#0d1f15]/95">
+              <div class="w-full border-b-2 border-yellow-500/40 pb-1.5 mb-3">
+                <div class="font-pixel-en text-[9px] text-yellow-400">ROAD TO 71st | 榮耀薪傳</div>
+                <div id="tv-year-title" class="text-sm font-bold text-white mt-1">69週年 紅白大對抗</div>
+                <div id="tv-desc" class="text-[11px] text-gray-200 mt-0.5 leading-snug"></div>
+              </div>
+
+              <!-- 三格獎盃槽位 (69 / 70 / 71) -->
+              <div class="grid grid-cols-3 gap-2.5 w-full mb-3">
+                <div id="trophy-slot-hist69" class="flex flex-col items-center p-2 rounded border-2 border-dashed border-gray-500 bg-black/50">
+                  <div class="trophy-icon text-3xl h-10 flex items-center justify-center opacity-25">🏆</div>
+                  <div class="font-pixel-en text-[9px] text-yellow-300 mt-1">69</div>
+                  <div class="text-[10px] text-gray-200 font-bold">紅白大對抗</div>
+                </div>
+                <div id="trophy-slot-hist70" class="flex flex-col items-center p-2 rounded border-2 border-dashed border-gray-500 bg-black/50">
+                  <div class="trophy-icon text-3xl h-10 flex items-center justify-center opacity-25">🏅</div>
+                  <div class="font-pixel-en text-[9px] text-yellow-300 mt-1">70</div>
+                  <div class="text-[10px] text-gray-200 font-bold">薪傳接力賽</div>
+                </div>
+                <div id="trophy-slot-stage71" class="flex flex-col items-center p-2 rounded border-2 border-dashed border-yellow-400 bg-yellow-950/30">
+                  <div class="font-pixel-en text-2xl h-10 flex items-center justify-center text-yellow-300 animate-pulse">?</div>
+                  <div class="font-pixel-en text-[9px] text-yellow-300 mt-1">71</div>
+                  <div class="text-[10px] text-yellow-200 font-bold">71大庄五力飛揚</div>
+                </div>
+              </div>
+
+              <button id="btn-tv-confirm" class="arcade-btn btn-gold w-full py-2 text-xs sm:text-sm">
+                確認並返回地圖 (CONTINUE)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           畫面 3：20班代表隊登錄圖鑑 (三甲~六戊 5x4 網格)
+           ========================================================= -->
+      <section id="screen-team" class="screen-layer screen-hidden justify-between p-3 bg-gray-950">
+        <!-- 頂部狀態標題 -->
+        <div class="flex items-center justify-between border-b-2 border-emerald-500 pb-1.5">
+          <div>
+            <h2 class="font-pixel-en text-xs sm:text-sm text-yellow-400">CLASS SELECT</h2>
+          </div>
+          <div class="text-right">
+            <div id="login-counter" class="font-pixel-en text-xs text-emerald-400">LOGIN 0/20</div>
+            <div id="login-status-sub" class="text-[10px] text-yellow-300">班級連線登錄中...</div>
+          </div>
+        </div>
+
+        <!-- 20 個班級像素網格圖鑑 (5欄 x 4列) -->
+        <div id="athlete-grid" class="grid grid-cols-5 gap-1.5 my-auto py-1">
+          <!-- 由 JS 動態生成三甲~六戊共 20 張班級像素卡片 -->
+        </div>
+
+        <!-- 當前選中班級詳細能力面板 -->
+        <div class="pixel-box p-2.5 flex flex-col gap-1.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span id="detail-num" class="px-1.5 py-0.5 bg-red-600 font-pixel-en text-[10px] rounded border border-white">#01</span>
+              <span id="detail-name" class="text-base font-bold text-yellow-300">三甲</span>
+              <span id="detail-role" class="text-xs text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-600">活力先鋒隊</span>
+            </div>
+            <span class="font-pixel-en text-[9px] text-green-400">ONLINE ●</span>
+          </div>
+
+          <!-- 三項能力數值條 -->
+          <div class="grid grid-cols-3 gap-2 text-[11px]">
+            <div>
+              <div class="flex justify-between text-gray-300"><span>衝刺速度</span><span id="stat-spd">95</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded overflow-hidden mt-0.5 border border-gray-600">
+                <div id="bar-spd" class="h-full bg-yellow-400 transition-all duration-200" style="width: 95%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-gray-300"><span>接力默契</span><span id="stat-pwr">92</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded overflow-hidden mt-0.5 border border-gray-600">
+                <div id="bar-pwr" class="h-full bg-red-500 transition-all duration-200" style="width: 92%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-gray-300"><span>團隊精神</span><span id="stat-tmw">98</span></div>
+              <div class="w-full h-2 bg-gray-800 rounded overflow-hidden mt-0.5 border border-gray-600">
+                <div id="bar-tmw" class="h-full bg-emerald-400 transition-all duration-200" style="width: 98%"></div>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-team-next" class="arcade-btn btn-green w-full py-2 mt-0.5 text-sm">
+            <span class="key-badge bg-white text-green-800">A</span>
+            <span>SELECT</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           畫面 4：賽前熱身訓練小遊戲 (Training Mini-Game)
+           ========================================================= -->
+      <section id="screen-training" class="screen-layer screen-hidden justify-between p-3.5 bg-[#193b24]">
+        <!-- 頂部訓練階段提示 -->
+        <div class="flex items-center justify-between pixel-box px-3 py-2">
+          <div>
+            <span class="px-2 py-0.5 bg-yellow-400 text-gray-900 font-pixel-en text-[9px] rounded font-bold">TRAINING</span>
+            <h2 id="train-stage-title" class="text-sm font-bold text-white mt-0.5">階段 1/2：熱身連按衝刺！</h2>
+          </div>
+          <div class="font-pixel-en text-xs text-yellow-300" id="train-step-indicator">1 / 2</div>
+        </div>
+
+        <!-- 訓練動畫畫布 (選手在跑道熱身與起跑線) -->
+        <div class="relative w-full flex-1 my-2 rounded-lg overflow-hidden border-3 border-white shadow-inner bg-[#2d8a3e]">
+          <canvas id="canvas-training" class="w-full h-full"></canvas>
+          
+          <!-- 訓練成功能力暴增 LEVEL UP 特效面板 -->
+          <div id="train-result-overlay" class="hidden absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-4 text-center">
+            <div class="mb-2 px-4 py-1 bg-yellow-400 text-gray-900 font-pixel-en text-xs sm:text-sm font-bold rounded border-2 border-white shadow-[0_4px_0_#000] animate-bounce">
+              ★ LEVEL UP! ★
+            </div>
+            <div class="pixel-box-gold p-4 w-full max-w-[280px] ring-4 ring-yellow-300/70 animate-pulse">
+              <div class="font-pixel-en text-xs text-yellow-400 mb-1.5">POWER &amp; TEAMWORK UP!</div>
+              <div class="text-lg font-bold text-white mb-3">全體 20 班戰力全面升級！</div>
+              <div class="space-y-2 text-left text-xs bg-gray-900 p-2.5 rounded border border-gray-700">
+                <div class="flex justify-between text-yellow-300 font-bold">
+                  <span>⚡ 50米速度 SPEED</span>
+                  <span>+20 MAX!</span>
+                </div>
+                <div class="flex justify-between text-emerald-400 font-bold">
+                  <span>🤝 接力默契 PASSING</span>
+                  <span>+30 MAX!</span>
+                </div>
+                <div class="flex justify-between text-red-400 font-bold">
+                  <span>🎈 親子默契 TEAMWORK</span>
+                  <span>+25 MAX!</span>
+                </div>
+              </div>
+              <div class="mt-2.5 font-pixel-en text-[9px] text-emerald-300">RETURNING TO MAP...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部訓練互動計量條與街機按鈕 -->
+        <div class="pixel-box p-3 flex flex-col gap-2.5">
+          <!-- 階段 1：連按集氣條 -->
+          <div id="train-phase-1">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-yellow-300 font-bold">連按按鈕集滿熱身能量！</span>
+              <span id="mash-percent" class="font-pixel-en text-xs text-white">0%</span>
+            </div>
+            <div class="w-full h-5 bg-gray-800 border-2 border-white rounded overflow-hidden p-0.5">
+              <div id="mash-bar" class="h-full bg-gradient-to-r from-yellow-400 to-red-500 transition-all duration-75" style="width: 0%"></div>
+            </div>
+            <button id="btn-train-mash" class="arcade-btn btn-gold w-full py-3 mt-2.5 text-base">
+              <span class="key-badge bg-red-600 text-white">A</span>
+              <span>狂按衝刺熱身！(TAP FAST!)</span>
+            </button>
+          </div>
+
+          <!-- 階段 2：精準起跑反應 Timing Bar -->
+          <div id="train-phase-2" class="hidden">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-emerald-300 font-bold">游標進入綠色區域時按下起跑！</span>
+              <span id="timing-feedback" class="font-pixel-en text-[10px] text-yellow-300">READY</span>
+            </div>
+            <!-- 精準計量條軌道 -->
+            <div class="relative w-full h-6 bg-gray-900 border-2 border-white rounded overflow-hidden">
+              <!-- 綠色完美判定區 (40% ~ 65%) -->
+              <div class="absolute top-0 bottom-0 left-[40%] w-[25%] bg-emerald-500/80 border-x-2 border-yellow-300 flex items-center justify-center">
+                <span class="font-pixel-en text-[8px] text-white">PERFECT</span>
+              </div>
+              <!-- 移動游標 -->
+              <div id="timing-cursor" class="absolute top-0 bottom-0 w-2 bg-yellow-300 shadow-[0_0_8px_#fff]" style="left: 0%"></div>
+            </div>
+            <button id="btn-train-timing" class="arcade-btn btn-red w-full py-3 mt-2.5 text-base">
+              <span class="key-badge bg-white text-red-600">B</span>
+              <span>抓準時機起跑！(SHOOT / START!)</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           畫面 5：互動賽事 QTE 闖關 (百米衝刺 / 大隊接力橫向交棒判定 / 歡樂趣味競賽)
+           ========================================================= -->
+      <section id="screen-race" class="screen-layer screen-hidden justify-between bg-gray-900">
+        <!-- 頂部賽事計分板與右上角主力班級像素特寫框 -->
+        <div class="relative z-20 flex items-start justify-between p-2.5 bg-gradient-to-b from-black/90 to-transparent">
+          <!-- 左側關卡資訊 -->
+          <div class="pixel-box px-2.5 py-1.5">
+            <div class="flex items-center gap-1.5">
+              <span id="race-stage-badge" class="px-1.5 py-0.5 bg-red-600 font-pixel-en text-[9px] rounded">STAGE 1/3</span>
+              <span id="race-timer" class="font-pixel-en text-xs text-yellow-300">10.0s</span>
+            </div>
+            <h2 id="race-title" class="text-sm font-bold text-white mt-1">百米衝刺決賽</h2>
+            <!-- 進度條 -->
+            <div class="w-32 h-2 bg-gray-800 rounded mt-1 border border-gray-500 overflow-hidden">
+              <div id="race-progress-bar" class="h-full bg-yellow-400 transition-all duration-150" style="width: 20%"></div>
+            </div>
+          </div>
+
+          <!-- 右上角代表班級像素特寫狀態框 -->
+          <div class="pixel-box-gold p-1.5 flex items-center gap-2 bg-gray-950/95">
+            <canvas id="canvas-portrait" width="44" height="44" class="w-11 h-11 bg-emerald-900 border border-yellow-400 rounded"></canvas>
+            <div class="pr-1">
+              <div id="active-runner-num" class="font-pixel-en text-[9px] text-yellow-400">CLASS REP</div>
+              <div id="active-runner-name" class="text-xs font-bold text-white">六戊代表</div>
+              <div id="active-runner-status" class="text-[10px] text-emerald-400">全速衝刺中</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 賽事主場景 Canvas (百米跑道 / 橫向大隊接力交棒 / 歡樂趣味競賽) -->
+        <canvas id="canvas-race" class="absolute inset-0 w-full h-full"></canvas>
+
+        <!-- 中央 QTE 動作評級跳字 (PERFECT! / GREAT!) -->
+        <div id="qte-callout" class="pointer-events-none relative z-20 my-auto text-center opacity-0 transition-opacity duration-150">
+          <span id="qte-callout-text" class="inline-block px-4 py-1.5 bg-yellow-400 text-gray-950 font-pixel-en text-base sm:text-lg border-4 border-white rounded-lg shadow-[0_6px_0_#000]">
+            PERFECT PASS!
+          </span>
+        </div>
+
+        <!-- 底部街機 QTE 互動按鈕區 (含大隊接力專屬綠色判定區計量條) -->
+        <div class="relative z-20 p-3 bg-gradient-to-t from-black/95 via-black/85 to-transparent">
+          <div id="qte-prompt-box" class="pixel-box p-3 flex flex-col items-center gap-2">
+            <div id="qte-instruction" class="text-xs text-yellow-300 font-bold tracking-wide text-center">
+              準備觸發關鍵戰術指令！
+            </div>
+
+            <!-- 大隊接力專屬：抓準綠色判定區 Timing Bar -->
+            <div id="relay-timing-container" class="hidden w-full flex-col gap-1 my-0.5">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-emerald-300 font-bold">▶ 抓準綠色判定區按下接棒！</span>
+                <span id="relay-zone-status" class="font-pixel-en text-[9px] text-yellow-300 animate-pulse">WAIT FOR BATON...</span>
+              </div>
+              <div class="relative w-full h-6 bg-gray-950 border-2 border-white rounded overflow-hidden">
+                <!-- 綠色完美接棒判定區 (50% ~ 76%) -->
+                <div class="absolute top-0 bottom-0 left-[50%] w-[26%] bg-emerald-500/85 border-x-2 border-yellow-300 flex items-center justify-center">
+                  <span class="font-pixel-en text-[8px] text-white drop-shadow">GREEN ZONE</span>
+                </div>
+                <!-- 傳棒移動游標 -->
+                <div id="relay-timing-cursor" class="absolute top-0 bottom-0 w-2.5 bg-yellow-300 border border-red-600 shadow-[0_0_10px_#fde047]" style="left: 5%"></div>
+              </div>
+            </div>
+
+            <!-- 動態切換的 QTE 按鈕 -->
+            <button id="btn-qte-action" class="arcade-btn btn-gold w-full py-3 text-base sm:text-lg animate-pulse-fast">
+              <span id="qte-key-badge" class="key-badge bg-white text-gray-900">B</span>
+              <span id="qte-btn-label">終點衝刺 SPRINT!</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           畫面 6：活動資訊與最終邀請結尾 (Event Info & Final Invite)
+           ========================================================= -->
+      <section id="screen-final" class="screen-layer screen-hidden justify-between p-4 bg-gradient-to-b from-red-950 via-gray-950 to-emerald-950">
+        <!-- 背景彩帶 Canvas -->
+        <canvas id="canvas-confetti" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+        <!-- 步驟 A：仿影片結尾「ACCEPT THE CHALLENGE? [YES]」確認畫面 -->
+        <div id="final-challenge-prompt" class="relative z-20 my-auto flex flex-col items-center">
+          <div class="pixel-box-gold w-full max-w-[320px] p-5 text-center shadow-2xl">
+            <div class="inline-block px-3 py-1 bg-red-600 border border-white rounded font-pixel-en text-[10px] text-white mb-3">
+              ★ 115/12/12 STAGE CLEAR ★
+            </div>
+            <h2 class="font-pixel-en text-base sm:text-lg text-yellow-400 leading-relaxed">
+              ACCEPT THE<br/>CHALLENGE?
+            </h2>
+            <p class="text-sm text-gray-200 mt-2 mb-5">
+              一甲～六戊 已準備就緒！<br/>準備好迎接 <strong class="text-yellow-300">71大庄校慶運動會</strong> 了嗎？
+            </p>
+
+            <div class="flex gap-3 justify-center">
+              <button id="btn-accept-yes" class="arcade-btn btn-gold flex-1 py-3 text-base animate-pulse-fast">
+                <span>▶ YES 接受挑戰</span>
+              </button>
+            </div>
+            <div class="mt-3 font-pixel-en text-[9px] text-emerald-400 animate-pixel-blink">
+              WAITING FOR PLAYER...
+            </div>
+          </div>
+        </div>
+
+        <!-- 步驟 B：運動會完整資訊與開幕倒數邀請卡 -->
+        <div id="final-invite-card" class="hidden relative z-20 flex-1 flex flex-col justify-between py-1">
+          <div class="text-center">
+            <div class="font-pixel-en text-[10px] text-yellow-400">DAZHUANG 71st ANNIVERSARY</div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white tracking-wider mt-0.5">
+              71大庄校慶運動會
+            </h2>
+          </div>
+
+          <!-- 開幕式即時倒數計時器 -->
+          <div class="pixel-box-gold p-3 text-center my-1.5">
+            <div class="text-[11px] text-yellow-300 mb-1">距離 115/12/12 開幕聖火點燃還有</div>
+            <div id="countdown-display" class="font-pixel-en text-base sm:text-lg text-white tracking-wider">
+              26D 08H 00M 00S
+            </div>
+          </div>
+
+          <!-- 活動時間、參賽班級與戰績摘要 -->
+          <div class="pixel-box p-3 space-y-2 text-xs sm:text-sm">
+            <div class="flex items-center justify-between border-b border-gray-700 pb-1.5">
+              <span class="text-gray-400">📅 運動會日期</span>
+              <span class="font-bold text-yellow-300">115/12/12 (六) 盛大登場</span>
+            </div>
+            <div class="flex items-center justify-between border-b border-gray-700 pb-1.5">
+              <span class="text-gray-400">🏫 參賽陣容</span>
+              <span class="font-bold text-white">一甲～六戊 全體師生</span>
+            </div>
+            <div class="flex items-center justify-between border-b border-gray-700 pb-1.5">
+              <span class="text-gray-400">🎈 焦點賽事</span>
+              <span class="font-bold text-emerald-300">50米衝刺・大隊接力・趣味競賽</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-400">🏆 備戰積分</span>
+              <span id="final-score-badge" class="font-pixel-en text-[11px] text-yellow-400">RANK S • 9999 PTS</span>
+            </div>
+          </div>
+
+          <!-- 底部行動呼籲按鈕 -->
+          <div class="flex flex-col gap-2 mt-1.5">
+            <button id="btn-register" class="arcade-btn btn-red w-full py-2.5 text-sm sm:text-base">
+              <span>🔥 115/12/12 一起為大庄孩子加油！</span>
+            </button>
+            <p class="text-center text-[11px] text-gray-300 mt-0.5">
+              Cobyright©大庄國小 體育組
+            </p>
+          </div>
+        </div>
+
+        <!-- 自訂遊戲內訊息提示框 -->
+        <div id="custom-toast" class="hidden absolute bottom-20 left-1/2 -translate-x-1/2 z-40 w-[88%] pixel-box-gold px-4 py-3 text-center shadow-2xl">
+          <div id="toast-title" class="font-bold text-yellow-300 text-sm">應援登錄成功！</div>
+          <div id="toast-msg" class="text-xs text-white mt-1">115/12/12 71大庄校慶運動會，我們操場見！</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- CRT 復古電視掃描線覆蓋層 -->
+    <div id="crt-layer" class="crt-overlay"></div>
+  </div>
+
+  <!-- =========================================================
+       核心 JavaScript：8-bit 音效引擎、像素繪圖與自動演繹流程
+       ========================================================= -->
+  <script>
+    /**
+     * 1. Web Audio API 8-bit 復古合成音效與背景音樂引擎
+     * 無需外部音檔，純程式碼即時合成方波/三角波音效
+     */
+    class RetroAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+        this.bgmTimer = null;
+        this.noteIndex = 0;
+        // 熱血 8-bit 進行曲旋律頻率表 (Hz)
+        this.melody = [
+          523.25, 0, 523.25, 659.25, 783.99, 0, 659.25, 783.99,
+          1046.50, 0, 783.99, 659.25, 587.33, 659.25, 523.25, 0,
+          587.33, 0, 587.33, 698.46, 880.00, 0, 783.99, 698.46,
+          659.25, 783.99, 880.00, 987.77, 1046.50, 0, 1046.50, 0
+        ];
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, duration = 0.12, type = 'square', volume = 0.12) {
+        if (this.muted || !freq) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          
+          gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {
+          // 忽略瀏覽器自動播放限制前的錯誤
+        }
+      }
+
+      playSelect() {
+        this.playTone(660, 0.08, 'square', 0.15);
+        setTimeout(() => this.playTone(880, 0.12, 'square', 0.15), 60);
+      }
+
+      playAction() {
+        this.playTone(440, 0.06, 'triangle', 0.18);
+        setTimeout(() => this.playTone(784, 0.14, 'square', 0.16), 50);
+      }
+
+      playPowerUp() {
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((n, idx) => {
+          setTimeout(() => this.playTone(n, 0.14, 'square', 0.15), idx * 70);
+        });
+      }
+
+      playFanfare() {
+        const notes = [523.25, 523.25, 523.25, 659.25, 783.99, 659.25, 1046.50];
+        const times = [0, 120, 240, 360, 520, 680, 840];
+        notes.forEach((n, idx) => {
+          setTimeout(() => this.playTone(n, 0.25, 'square', 0.16), times[idx]);
+        });
+      }
+
+      startBGM() {
+        this.init();
+        if (this.bgmTimer) return;
+        this.bgmTimer = setInterval(() => {
+          if (this.muted) return;
+          const freq = this.melody[this.noteIndex % this.melody.length];
+          if (freq > 0) {
+            this.playTone(freq, 0.14, 'triangle', 0.06);
+          }
+          this.noteIndex++;
+        }, 180);
+      }
+
+      toggleMute() {
+        this.muted = !this.muted;
+        return this.muted;
+      }
+    }
+
+    const audio = new RetroAudioEngine();
+
+    /**
+     * 2. 三甲～六戊（共 20 班）代表隊資料與狀態管理
+     */
+    const GRADES = ['三', '四', '五', '六'];
+    const SECTIONS = ['甲', '乙', '丙', '丁', '戊'];
+    const ROLES = ['閃電飛毛腿', '接力主力棒', '圈力小英雄', '精神總錦標', '全能運動王'];
+    const HAIR_COLORS = ['#1f2937', '#451a03', '#78350f', '#0f172a', '#92400e'];
+    const SKIN_COLORS = ['#f5cba7', '#e0ac69', '#f1c27d', '#ffdbac'];
+    const GRADE_COLORS = ['#2ea843', '#2563eb', '#f59e0b', '#e03c28'];
+
+    // 依序產生「三甲、三乙、三丙、三丁、三戊」到「六戊」共 20 個班級（供班級選擇畫面顯示）
+    const ATHLETES = [];
+    GRADES.forEach((g, gIdx) => {
+      SECTIONS.forEach((s, sIdx) => {
+        const idx = gIdx * 5 + sIdx;
+        ATHLETES.push({
+          num: String(idx + 1).padStart(2, '0'),
+          name: `${g}${s}`,
+          role: `${g}年級・${ROLES[idx % ROLES.length]}`,
+          spd: 88 + ((idx * 3) % 12),
+          pwr: 89 + ((idx * 5) % 11),
+          tmw: 92 + ((idx * 7) % 8),
+          hair: HAIR_COLORS[idx % HAIR_COLORS.length],
+          skin: SKIN_COLORS[idx % SKIN_COLORS.length],
+          jersey: GRADE_COLORS[gIdx]
+        });
+      });
+    });
+
+    // 50米衝刺決賽專屬代表「一甲代表隊」資料
+    const GRADE_ONE_A_REP = {
+      num: '01',
+      name: '一甲',
+      role: '一年級・超萌飛毛腿',
+      spd: 95,
+      pwr: 90,
+      tmw: 98,
+      hair: '#1f2937',
+      skin: '#f5cba7',
+      jersey: '#38bdf8'
+    };
+
+    const HISTORY_DATA = {
+      hist69: {
+        year: '69',
+        icon: '🏆',
+        shortTitle: '紅白大對抗',
+        title: '69週年 紅白大對抗',
+        videoSrc: './gemini_generated_video_3B59787A.MP4',
+        desc: '69週年校慶紅白大對抗，全校學生熱血對決！'
+      },
+      hist70: {
+        year: '70',
+        icon: '🏅',
+        shortTitle: '庄情薪傳接力賽',
+        title: '70週年 庄情薪傳接力賽',
+        videoSrc: './gemini_generated_video_79B4C1A5.MP4',
+        desc: '70週年薪傳接力賽，傳遞大庄精神，邁向第71週年！'
+      }
+    };
+
+    const state = {
+      currentScreen: 'screen-title',
+      autoPlay: false,
+      autoTimers: [],
+      viewedHistory: new Set(),
+      score: 8800,
+      teamLoggedIn: false,
+      trainingDone: false,
+      // 訓練狀態
+      mashProgress: 0,
+      timingPos: 0,
+      timingDir: 1,
+      timingActive: false,
+      // 賽事狀態 (0: 百米衝刺, 1: 大隊接力橫向交棒判定, 2: 歡樂趣味競賽)
+      raceStage: 0,
+      raceProgress: 15,
+      raceTimer: 10.0,
+      qteTriggered: false,
+      qteCompleted: false,
+      // 大隊接力專屬狀態 (左方傳棒者位置 0~100%，中央接棒者起跑位置)
+      relayLeftRunnerProg: 5,
+      relayRightRunnerMove: 0,
+      relayBatonPassed: false,
+      // 趣味競賽「跳圈圈」專屬狀態 (0:起點 -> 1~4:四個圈圈 -> 5:衝過終點線)
+      hoopStep: 0,
+      hoopAnimProg: 1,
+      hoopFromX: 28,
+      hoopToX: 28,
+      animFrameId: null
+    };
+
+    /**
+     * 3. 畫面切換與自動演繹排程管理工具
+     */
+    function clearAutoTimers() {
+      state.autoTimers.forEach(id => clearTimeout(id));
+      state.autoTimers = [];
+    }
+
+    function addAutoTimer(fn, delay) {
+      if (!state.autoPlay) return;
+      const id = setTimeout(fn, delay);
+      state.autoTimers.push(id);
+    }
+
+    function showScreen(screenId) {
+      state.currentScreen = screenId;
+      document.querySelectorAll('.screen-layer').forEach(el => {
+        if (el.id === screenId) {
+          el.classList.remove('screen-hidden');
+        } else {
+          el.classList.add('screen-hidden');
+        }
+      });
+    }
+
+    /**
+     * 4. 8-bit 像素人物頭像與側面跑者繪製引擎
+     */
+    function drawPixelAvatar(canvas, ath, pose = 0) {
+      if (!canvas || !ath) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // 背景底色
+      ctx.fillStyle = '#064e3b';
+      ctx.fillRect(0, 0, w, h);
+
+      const s = w / 16; // 16x16 像素網格基準
+
+      // 頭髮
+      ctx.fillStyle = ath.hair;
+      ctx.fillRect(4 * s, 2 * s, 8 * s, 3 * s);
+      ctx.fillRect(3 * s, 3 * s, 2 * s, 4 * s);
+      ctx.fillRect(11 * s, 3 * s, 2 * s, 4 * s);
+
+      // 臉部肌膚
+      ctx.fillStyle = ath.skin;
+      ctx.fillRect(5 * s, 4 * s, 6 * s, 6 * s);
+
+      // 眼睛
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(6 * s, 6 * s, 1.2 * s, 1.5 * s);
+      ctx.fillRect(9 * s, 6 * s, 1.2 * s, 1.5 * s);
+
+      // 運動頭帶
+      ctx.fillStyle = '#ffcc00';
+      ctx.fillRect(4 * s, 3.5 * s, 8 * s, 1.2 * s);
+
+      // 隊服上衣
+      ctx.fillStyle = ath.jersey;
+      ctx.fillRect(3 * s, 10 * s, 10 * s, 6 * s);
+      // 隊服白邊領口
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(6 * s, 10 * s, 4 * s, 1.5 * s);
+      if (pose === 1) {
+        ctx.fillRect(5 * s, 12 * s, 6 * s, 1 * s);
+      }
+    }
+
+    // 繪製側面跑者/跳躍者像素小人 (用於大隊接力與跳圈圈)
+    function drawSideRunner(ctx, x, y, jerseyColor, step, hasBaton = false, isWaiting = false) {
+      // 地面陰影
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(x - 9, y + 16, 18, 4);
+
+      // 身體/隊服
+      ctx.fillStyle = jerseyColor;
+      ctx.fillRect(x - 6, y, 12, 10);
+
+      // 頭部與頭髮
+      ctx.fillStyle = '#f5cba7';
+      ctx.fillRect(x - 4, y - 9, 10, 9);
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(x - 5, y - 10, 11, 3);
+      // 眼睛朝右
+      ctx.fillRect(x + 3, y - 6, 2, 2);
+
+      // 手臂與接力棒
+      ctx.fillStyle = '#f5cba7';
+      if (isWaiting) {
+        // 預備接棒姿勢：左手向後伸出等待接棒
+        ctx.fillRect(x - 11, y + 2, 6, 3);
+      } else {
+        ctx.fillRect(x + 4, y + 2, 6, 3);
+      }
+
+      if (hasBaton) {
+        ctx.fillStyle = '#fde047';
+        ctx.fillRect(x + 8, y - 2, 7, 3);
+      }
+
+      // 雙腿跑步/跳躍動態
+      ctx.fillStyle = '#1f2937';
+      if (isWaiting) {
+        ctx.fillRect(x - 4, y + 10, 4, 6);
+        ctx.fillRect(x + 2, y + 10, 4, 6);
+      } else if (step === 0) {
+        ctx.fillRect(x - 7, y + 10, 5, 5);
+        ctx.fillRect(x + 3, y + 9, 5, 6);
+      } else {
+        ctx.fillRect(x - 2, y + 10, 4, 6);
+        ctx.fillRect(x + 1, y + 10, 4, 5);
+      }
+    }
+
+    /**
+     * 8. 畫面 5：互動賽事 QTE 闖關配置
+     * Stage 0: 50米衝刺決賽 (一甲代表隊)
+     * Stage 1: 大隊接力決戰 (左方傳棒者跑向中央接棒者 + 抓準綠色判定區接棒起跑)
+     * Stage 2: 親子趣味競賽・圈力衝刺 (依序跳過地上 4 個圈圈並衝過終點線)
+     */
+    const RACE_CONFIGS = [
+      {
+        stageText: 'STAGE 1/3',
+        title: '50米衝刺決賽',
+        customAthlete: GRADE_ONE_A_REP,
+        status: '全速衝刺中',
+        key: 'B',
+        keyColor: 'bg-red-500 text-white',
+        btnStyle: 'btn-red',
+        btnLabel: '終點衝刺 SPRINT!',
+        instruction: '距離終點線只剩 10 公尺！按下 [B] 壓線衝刺！'
+      },
+      {
+        stageText: 'STAGE 2/3',
+        title: '大隊接力・完美交棒',
+        athleteIdx: 14, // 五戊 -> 六甲
+        status: '等待交棒判定',
+        key: 'A',
+        keyColor: 'bg-yellow-300 text-gray-900',
+        btnStyle: 'btn-gold',
+        btnLabel: '抓準綠區接棒 PASS!',
+        instruction: '傳棒者從左側靠近中央隊友！進入【綠色判定區】按下 [A] 接棒起跑！'
+      },
+      {
+        stageText: 'FINAL STAGE',
+        title: '親子趣味競賽・圈力衝刺',
+        athleteIdx: 19, // 六戊
+        status: '跳躍進度 0/5',
+        key: 'A',
+        keyColor: 'bg-yellow-300 text-gray-900',
+        btnStyle: 'btn-green',
+        btnLabel: '往前跳 JUMP! (0/5)',
+        instruction: '連按 [A] 依序跳過地上 4 個圈圈，第 5 跳衝過終點線！'
+      }
+    ];
+
+    // 趣味競賽跳圈圈的 6 個 X 座標節點 (起點 + 4個圈圈 + 終點線後方)
+    const HOOP_STOPS_X = [28, 68, 110, 152, 194, 244];
+    const HOOP_COLORS = ['#ef4444', '#facc15', '#38bdf8', '#4ade80'];
+
+    function startRaceSeries() {
+      showScreen('screen-race');
+      state.raceStage = 0;
+      loadRaceStage(0);
+    }
+
+    function loadRaceStage(stageIdx) {
+      state.raceStage = stageIdx;
+      state.raceProgress = 25;
+      state.qteCompleted = false;
+      state.relayLeftRunnerProg = 4;
+      state.relayRightRunnerMove = 0;
+      state.relayBatonPassed = false;
+      state.hoopStep = 0;
+      state.hoopAnimProg = 1;
+      state.hoopFromX = HOOP_STOPS_X[0];
+      state.hoopToX = HOOP_STOPS_X[0];
+
+      const cfg = RACE_CONFIGS[stageIdx];
+      const ath = cfg.customAthlete || ATHLETES[cfg.athleteIdx];
+
+      // 更新頂部 UI
+      document.getElementById('race-stage-badge').textContent = cfg.stageText;
+      document.getElementById('race-title').textContent = cfg.title;
+      document.getElementById('race-progress-bar').style.width = (stageIdx === 1 || stageIdx === 2) ? '10%' : '30%';
+      document.getElementById('race-timer').textContent = `0${9 - stageIdx}.5s`;
+
+      // 更新右上角主力班級特寫框
+      const portraitCanvas = document.getElementById('canvas-portrait');
+      drawPixelAvatar(portraitCanvas, ath, 1);
+      document.getElementById('active-runner-num').textContent = `#${ath.num} 班級代表`;
+      document.getElementById('active-runner-name').textContent = `${ath.name}代表隊`;
+      document.getElementById('active-runner-status').textContent = cfg.status;
+
+      // 控制大隊接力專屬「綠色判定區計量條」顯示或隱藏
+      const relayContainer = document.getElementById('relay-timing-container');
+      if (stageIdx === 1) {
+        relayContainer.classList.remove('hidden');
+        relayContainer.classList.add('flex');
+        document.getElementById('relay-zone-status').textContent = 'RUNNER APPROACHING...';
+      } else {
+        relayContainer.classList.add('hidden');
+        relayContainer.classList.remove('flex');
+      }
+
+      // 更新底部 QTE 按鈕樣式
+      document.getElementById('qte-instruction').textContent = cfg.instruction;
+      const keyBadge = document.getElementById('qte-key-badge');
+      keyBadge.textContent = cfg.key;
+      keyBadge.className = `key-badge ${cfg.keyColor}`;
+
+      const actionBtn = document.getElementById('btn-qte-action');
+      actionBtn.className = `arcade-btn ${cfg.btnStyle} w-full py-3 text-base sm:text-lg animate-pulse-fast`;
+      document.getElementById('qte-btn-label').textContent = cfg.btnLabel;
+
+      // 啟動賽事主場景繪製
+      if (state.animFrameId) cancelAnimationFrame(state.animFrameId);
+      runRaceCanvasLoop();
+
+      // 若為自動演繹模式：Stage 0 單次衝線；Stage 1 綠區自動交棒；Stage 2 自動連續跳 5 次圈圈衝線
+      if (stageIdx === 0) {
+        addAutoTimer(() => {
+          triggerQteSuccess();
+        }, 1450);
+      } else if (stageIdx === 2 && state.autoPlay) {
+        for (let jumpIdx = 1; jumpIdx <= 5; jumpIdx++) {
+          addAutoTimer(() => {
+            if (state.currentScreen === 'screen-race' && state.raceStage === 2) {
+              triggerQteSuccess();
+            }
+          }, 550 * jumpIdx);
+        }
+      }
+    }
+
+    /**
+     * 5. 畫面 1 & 2 背景像素畫布繪製
+     */
+    function drawTitleBackground() {
+      const canvas = document.getElementById('canvas-title-bg');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 270;
+      canvas.height = 480;
+
+      // 天空漸層像素帶
+      ctx.fillStyle = '#0f2942';
+      ctx.fillRect(0, 0, 270, 260);
+      ctx.fillStyle = '#163d61';
+      ctx.fillRect(0, 180, 270, 80);
+
+      // 遠景校舍像素剪影
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(20, 210, 90, 50);
+      ctx.fillRect(150, 200, 100, 60);
+      // 校舍窗戶燈光
+      ctx.fillStyle = '#fde047';
+      for (let x = 30; x < 100; x += 16) {
+        ctx.fillRect(x, 222, 8, 8);
+        ctx.fillRect(x, 238, 8, 8);
+      }
+      for (let x = 162; x < 240; x += 18) {
+        ctx.fillRect(x, 214, 8, 8);
+        ctx.fillRect(x, 232, 8, 8);
+      }
+
+      // 綠草地
+      ctx.fillStyle = '#1c5c28';
+      ctx.fillRect(0, 260, 270, 60);
+
+      // 紅色 PU 跑道
+      ctx.fillStyle = '#b91c1c';
+      ctx.fillRect(0, 320, 270, 160);
+      // 白色跑道分道線
+      ctx.fillStyle = '#ffffff';
+      [345, 380, 415, 450].forEach(y => {
+        ctx.fillRect(0, y, 270, 3);
+      });
+    }
+
+    function drawStageMapCanvas() {
+      const canvas = document.getElementById('canvas-map');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 270;
+      canvas.height = 480;
+
+      // 操場與校園綠地底色
+      ctx.fillStyle = '#1e5631';
+      ctx.fillRect(0, 0, 270, 480);
+
+      // 像素草叢點綴
+      ctx.fillStyle = '#2d7a46';
+      for (let i = 0; i < 60; i++) {
+        const rx = (i * 47) % 260;
+        const ry = (i * 83) % 470;
+        ctx.fillRect(rx, ry, 8, 6);
+      }
+
+      // 橫向校園小溪
+      ctx.fillStyle = '#2563eb';
+      ctx.fillRect(0, 415, 270, 24);
+      ctx.fillStyle = '#60a5fa';
+      for (let x = 10; x < 260; x += 40) {
+        ctx.fillRect(x, 424, 18, 3);
+      }
+
+      // 闖關金色泥土路徑 (S 型路線連接 2024 -> 2025 -> 2026)
+      ctx.strokeStyle = '#92400e';
+      ctx.lineWidth = 18;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(75, 445);
+      ctx.lineTo(75, 375);
+      ctx.quadraticCurveTo(140, 340, 195, 290);
+      ctx.quadraticCurveTo(210, 220, 135, 145);
+      ctx.stroke();
+
+      // 路徑內側亮色虛線
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 4;
+      ctx.setLineDash([8, 8]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    /**
+     * 6. 畫面 3：20班代表隊登錄圖鑑初始化與動畫 (三甲~六戊)
+     */
+    function initTeamScreen() {
+      const grid = document.getElementById('athlete-grid');
+      grid.innerHTML = '';
+
+      ATHLETES.forEach((ath, idx) => {
+        const card = document.createElement('button');
+        card.id = `ath-card-${idx}`;
+        card.className = 'flex flex-col items-center p-1 rounded border border-gray-700 bg-gray-900/90 opacity-35 transition-all duration-150';
+        card.innerHTML = `
+          <canvas id="ath-cv-${idx}" width="32" height="32" class="w-7 h-7 rounded border border-gray-600"></canvas>
+          <span class="text-[11px] font-bold text-white leading-tight mt-0.5">${ath.name}</span>
+        `;
+        card.addEventListener('click', () => {
+          audio.playSelect();
+          selectAthleteDetail(idx);
+        });
+        grid.appendChild(card);
+
+        const cv = document.getElementById(`ath-cv-${idx}`);
+        drawPixelAvatar(cv, ath, idx % 2);
+      });
+
+      // 逐一點亮 20 個班級 LOGIN 動畫 (三甲 -> 六戊)
+      let count = 0;
+      const loginInterval = setInterval(() => {
+        if (count >= ATHLETES.length) {
+          clearInterval(loginInterval);
+          state.teamLoggedIn = true;
+          document.getElementById('login-status-sub').textContent = 'ALL 20 CLASSES READY!';
+          return;
+        }
+        const card = document.getElementById(`ath-card-${count}`);
+        if (card) {
+          card.classList.remove('opacity-35', 'border-gray-700');
+          card.classList.add('opacity-100', 'border-emerald-400', 'bg-emerald-950/70');
+          audio.playTone(440 + count * 28, 0.05, 'square', 0.08);
+          selectAthleteDetail(count);
+        }
+        count++;
+        document.getElementById('login-counter').textContent = `LOGIN ${count}/20`;
+      }, 95);
+
+      // 自動演繹模式排程：選完班級名單後返回大地圖
+      if (state.autoPlay) {
+        addAutoTimer(() => {
+          finishTeamSelectionAndReturnToMap();
+        }, 2500);
+      }
+    }
+
+    function selectAthleteDetail(idx) {
+      const ath = ATHLETES[idx];
+      document.querySelectorAll('#athlete-grid button').forEach((btn, i) => {
+        if (i === idx) {
+          btn.classList.add('ring-2', 'ring-yellow-400', 'scale-105', 'z-10');
+        } else {
+          btn.classList.remove('ring-2', 'ring-yellow-400', 'scale-105', 'z-10');
+        }
+      });
+
+      document.getElementById('detail-num').textContent = `#${ath.num}`;
+      document.getElementById('detail-name').textContent = ath.name;
+      document.getElementById('detail-role').textContent = ath.role;
+      document.getElementById('stat-spd').textContent = ath.spd;
+      document.getElementById('stat-pwr').textContent = ath.pwr;
+      document.getElementById('stat-tmw').textContent = ath.tmw;
+
+      document.getElementById('bar-spd').style.width = `${ath.spd}%`;
+      document.getElementById('bar-pwr').style.width = `${ath.pwr}%`;
+      document.getElementById('bar-tmw').style.width = `${ath.tmw}%`;
+    }
+
+    /**
+     * 7. 畫面 4：賽前熱身訓練小遊戲
+     */
+    let trainAnimId = null;
+
+    function startTrainingScreen() {
+      showScreen('screen-training');
+      state.mashProgress = 0;
+      state.timingActive = false;
+      document.getElementById('train-stage-title').textContent = '階段 1/2：熱身連按衝刺！';
+      document.getElementById('train-step-indicator').textContent = '1 / 2';
+      document.getElementById('train-phase-1').classList.remove('hidden');
+      document.getElementById('train-phase-2').classList.add('hidden');
+      document.getElementById('train-result-overlay').classList.add('hidden');
+      updateMashUI();
+
+      // 啟動訓練場畫布動畫
+      const canvas = document.getElementById('canvas-training');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 260;
+      canvas.height = 240;
+      let tick = 0;
+
+      function renderTraining() {
+        tick++;
+        ctx.clearRect(0, 0, 260, 240);
+
+        // 操場紅綠配色背景
+        ctx.fillStyle = '#2d8a3e';
+        ctx.fillRect(0, 0, 260, 240);
+        ctx.fillStyle = '#c83728';
+        ctx.fillRect(25, 15, 210, 210);
+
+        // 跑道白線
+        ctx.fillStyle = '#ffffff';
+        [65, 110, 155, 200].forEach(x => ctx.fillRect(x, 15, 3, 210));
+        // 起跑線
+        ctx.fillRect(25, 175, 210, 5);
+
+        // 繪製 4 位熱身選手小人
+        const speedOffset = (state.mashProgress / 100) * 60;
+        [0, 1, 2, 3].forEach(i => {
+          const px = 42 + i * 45;
+          const py = 155 - speedOffset + Math.sin(tick * 0.25 + i) * 4;
+          drawPixelRunner(ctx, px, py, ATHLETES[i].jersey, Math.floor(tick / 6) % 2);
+        });
+
+        // 訓練標語牌
+        ctx.fillStyle = '#111827';
+        ctx.fillRect(65, 24, 130, 22);
+        ctx.strokeStyle = '#ffcc00';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(65, 24, 130, 22);
+        ctx.fillStyle = '#ffcc00';
+        ctx.font = 'bold 11px "DotGothic16", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('WARM UP • 全力備戰！', 130, 39);
+
+        if (state.currentScreen === 'screen-training') {
+          trainAnimId = requestAnimationFrame(renderTraining);
+        }
+      }
+      renderTraining();
+
+      // 若為自動演繹模式，自動模擬連按與完美起跑
+      if (state.autoPlay) {
+        let autoMashCount = 0;
+        const autoMashInterval = setInterval(() => {
+          if (state.currentScreen !== 'screen-training' || state.mashProgress >= 100) {
+            clearInterval(autoMashInterval);
+            return;
+          }
+          handleTrainingMash();
+          autoMashCount++;
+        }, 160);
+      }
+    }
+
+    function drawPixelRunner(ctx, x, y, jerseyColor, step) {
+      // 陰影
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(x - 8, y + 16, 16, 4);
+      // 身體/球衣
+      ctx.fillStyle = jerseyColor;
+      ctx.fillRect(x - 6, y, 12, 10);
+      // 頭
+      ctx.fillStyle = '#f5cba7';
+      ctx.fillRect(x - 5, y - 9, 10, 9);
+      // 頭髮
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(x - 5, y - 10, 10, 3);
+      // 雙腿跑步擺動
+      ctx.fillStyle = '#1f2937';
+      if (step === 0) {
+        ctx.fillRect(x - 5, y + 10, 4, 6);
+        ctx.fillRect(x + 2, y + 10, 4, 4);
+      } else {
+        ctx.fillRect(x - 5, y + 10, 4, 4);
+        ctx.fillRect(x + 2, y + 10, 4, 6);
+      }
+    }
+
+    function updateMashUI() {
+      const pct = Math.min(100, Math.round(state.mashProgress));
+      document.getElementById('mash-percent').textContent = `${pct}%`;
+      document.getElementById('mash-bar').style.width = `${pct}%`;
+    }
+
+    function handleTrainingMash() {
+      if (state.mashProgress >= 100) return;
+      audio.playAction();
+      state.mashProgress = Math.min(100, state.mashProgress + 20);
+      updateMashUI();
+
+      if (state.mashProgress >= 100) {
+        audio.playSelect();
+        setTimeout(() => startTimingPhase(), 350);
+      }
+    }
+
+    function startTimingPhase() {
+      document.getElementById('train-stage-title').textContent = '階段 2/2：起跑反應計量條！';
+      document.getElementById('train-step-indicator').textContent = '2 / 2';
+      document.getElementById('train-phase-1').classList.add('hidden');
+      document.getElementById('train-phase-2').classList.remove('hidden');
+
+      state.timingActive = true;
+      state.timingPos = 10;
+      state.timingDir = 1;
+
+      const cursorEl = document.getElementById('timing-cursor');
+      function moveCursor() {
+        if (!state.timingActive) return;
+        state.timingPos += state.timingDir * 2.4;
+        if (state.timingPos >= 96) {
+          state.timingPos = 96;
+          state.timingDir = -1;
+        } else if (state.timingPos <= 0) {
+          state.timingPos = 0;
+          state.timingDir = 1;
+        }
+        cursorEl.style.left = `${state.timingPos}%`;
+
+        // 自動演繹模式在進入完美區間 (45%~58%) 時自動按下
+        if (state.autoPlay && state.timingPos >= 46 && state.timingPos <= 58) {
+          handleTimingStop();
+          return;
+        }
+        requestAnimationFrame(moveCursor);
+      }
+      requestAnimationFrame(moveCursor);
+    }
+
+    function handleTimingStop() {
+      if (!state.timingActive) return;
+      state.timingActive = false;
+      const inPerfect = state.timingPos >= 38 && state.timingPos <= 67;
+      document.getElementById('timing-feedback').textContent = inPerfect ? 'PERFECT!!' : 'GREAT!';
+      
+      audio.playPowerUp();
+      setTimeout(() => audio.playFanfare(), 350);
+      state.trainingDone = true;
+      state.score += inPerfect ? 1000 : 600;
+      document.getElementById('train-result-overlay').classList.remove('hidden');
+
+      setTimeout(() => {
+        finishTrainingAndReturnToMap();
+      }, 2200);
+    }
+
+    function runRaceCanvasLoop() {
+      const canvas = document.getElementById('canvas-race');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 270;
+      canvas.height = 480;
+      let tick = 0;
+
+      function renderRace() {
+        if (state.currentScreen !== 'screen-race') return;
+        tick++;
+        ctx.clearRect(0, 0, 270, 480);
+
+        if (state.raceStage === 0) {
+          // ==================================================
+          // STAGE 1：百米衝刺決賽 (直式跑道衝線)
+          // ==================================================
+          ctx.fillStyle = '#1c5c28';
+          ctx.fillRect(0, 0, 270, 480);
+
+          // 觀眾看台像素點陣
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(0, 0, 32, 480);
+          ctx.fillRect(238, 0, 32, 480);
+          for (let y = 10; y < 470; y += 16) {
+            ctx.fillStyle = (y + tick) % 32 === 0 ? '#ffcc00' : '#ef4444';
+            ctx.fillRect(8, y, 6, 6);
+            ctx.fillRect(252, y, 6, 6);
+          }
+
+          // 紅色跑道
+          ctx.fillStyle = '#c83728';
+          ctx.fillRect(32, 0, 206, 480);
+
+          // 動態捲動跑道白線
+          const scrollY = (tick * (state.qteCompleted ? 9 : 4)) % 60;
+          ctx.fillStyle = '#ffffff';
+          [83, 135, 187].forEach(x => ctx.fillRect(x, 0, 3, 480));
+          for (let y = scrollY - 60; y < 480; y += 60) {
+            ctx.fillStyle = 'rgba(255,255,255,0.45)';
+            ctx.fillRect(32, y, 206, 2);
+          }
+
+          // 終點線
+          const finishY = state.qteCompleted ? 340 : 140;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(32, finishY, 206, 8);
+
+          // 繪製我方與對手跑者
+          const runnerY = state.qteCompleted ? 115 : 250;
+          drawPixelRunner(ctx, 58, 225, '#7e22ce', Math.floor(tick / 5) % 2);
+          drawPixelRunner(ctx, 212, 235, '#1d4ed8', Math.floor(tick / 5) % 2);
+          drawPixelRunner(ctx, 110, runnerY, '#e03c28', Math.floor(tick / 4) % 2);
+
+        } else if (state.raceStage === 1) {
+          // ==================================================
+          // STAGE 2：大隊接力決戰
+          // 傳棒者從畫面左側移動向站在畫面中間的接棒者 + 綠色判定區成功接棒起跑
+          // ==================================================
+          // 操場草地與看台背景
+          ctx.fillStyle = '#1c5c28';
+          ctx.fillRect(0, 0, 270, 480);
+
+          // 上方歡呼看台與錦旗
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(0, 68, 270, 48);
+          for (let x = 10; x < 260; x += 18) {
+            ctx.fillStyle = (x + tick) % 36 < 18 ? '#fde047' : '#38bdf8';
+            ctx.fillRect(x, 82 + (tick % 4), 8, 8);
+          }
+
+          // 橫向紅色 PU 跑道 (位於畫面中央 y=155 ~ 295)
+          ctx.fillStyle = '#c83728';
+          ctx.fillRect(0, 155, 270, 140);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 155, 270, 4);
+          ctx.fillRect(0, 225, 270, 3);
+          ctx.fillRect(0, 291, 270, 4);
+
+          // 畫面中央綠色「接力傳接判定區 (EXCHANGE ZONE)」標示
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.38)';
+          ctx.fillRect(102, 159, 64, 132);
+          // 接棒區黃色雙虛線
+          ctx.fillStyle = '#fde047';
+          for (let y = 162; y < 288; y += 12) {
+            ctx.fillRect(102, y, 4, 7);
+            ctx.fillRect(162, y, 4, 7);
+          }
+
+          // 地面提示字樣
+          ctx.fillStyle = '#fde047';
+          ctx.font = 'bold 10px "Press Start 2P", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('PASS ZONE', 134, 148);
+
+          // 更新左側傳棒者移動進度 (0 -> 95%)
+          if (!state.relayBatonPassed) {
+            state.relayLeftRunnerProg += 0.95;
+            if (state.relayLeftRunnerProg > 95) {
+              state.relayLeftRunnerProg = 8; // 若玩家未按，循環跑入讓玩家容易抓準
+            }
+            const cursorEl = document.getElementById('relay-timing-cursor');
+            if (cursorEl) cursorEl.style.left = `${state.relayLeftRunnerProg}%`;
+            document.getElementById('race-progress-bar').style.width = `${state.relayLeftRunnerProg}%`;
+
+            // 檢查是否進入綠色判定區 (50% ~ 76%)
+            const inGreen = state.relayLeftRunnerProg >= 50 && state.relayLeftRunnerProg <= 76;
+            const zoneStatus = document.getElementById('relay-zone-status');
+            if (zoneStatus) {
+              zoneStatus.textContent = inGreen ? '★ IN GREEN ZONE! PRESS [A]!' : 'APPROACHING...';
+              zoneStatus.className = inGreen
+                ? 'font-pixel-en text-[9px] text-emerald-400 animate-ping'
+                : 'font-pixel-en text-[9px] text-yellow-300';
+            }
+
+            // 若在導演自動演繹模式 (Auto Play)，當游標抵達綠色判定區正中央 (60%~68%) 時自動完美接棒！
+            if (state.autoPlay && state.relayLeftRunnerProg >= 60 && state.relayLeftRunnerProg <= 68) {
+              triggerQteSuccess();
+            }
+          } else {
+            // 接棒成功後：站在畫面中間的接棒者全速向右側衝刺起跑！
+            state.relayRightRunnerMove += 4.6;
+          }
+
+          // 計算左側傳棒者 X 座標 (從畫面左側 x=15 跑到中央 x=116)
+          const leftRunnerX = state.relayBatonPassed
+            ? 116
+            : 12 + (state.relayLeftRunnerProg / 65) * 104;
+
+          // 計算中央等待接棒者 X 座標 (站在畫面中間 x=138，接棒後往右側衝刺)
+          const middleRunnerX = 138 + state.relayRightRunnerMove;
+
+          // 上方第1跑道：對手班級陪跑背景
+          const rivalX = (tick * 2.2) % 250;
+          drawSideRunner(ctx, rivalX, 190, '#7e22ce', Math.floor(tick / 5) % 2, false, false);
+
+          // 下方第2跑道 (主視角)：
+          // 1. 從畫面左側跑向中間的傳棒者 (身穿紅色隊服，交棒前手持金棒)
+          drawSideRunner(
+            ctx,
+            Math.min(122, leftRunnerX),
+            258,
+            '#e03c28',
+            state.relayBatonPassed ? 0 : Math.floor(tick / 4) % 2,
+            !state.relayBatonPassed,
+            false
+          );
+
+          // 2. 站在畫面中間的接棒者 (身穿綠色隊服，接棒前呈現預備接棒姿勢，接棒後持棒向右高速起跑！)
+          drawSideRunner(
+            ctx,
+            middleRunnerX,
+            258,
+            '#2ea843',
+            state.relayBatonPassed ? Math.floor(tick / 3) % 2 : 0,
+            state.relayBatonPassed,
+            !state.relayBatonPassed
+          );
+
+          // 頭頂角色標記
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 11px "DotGothic16", sans-serif';
+          ctx.fillText('傳棒跑者', Math.min(115, leftRunnerX), 232);
+          ctx.fillStyle = '#fde047';
+          ctx.fillText(state.relayBatonPassed ? '接棒衝刺！⚡' : '接棒者(中央待命)', Math.min(235, middleRunnerX), 218);
+
+        } else {
+          // ==================================================
+          // STAGE 3：趣味競賽・歡樂跳圈圈 (HOOP JUMP)
+          // 人物從畫面左邊往右邊跳，地上 4 個圈圈 + 右側終點線，按擊按鈕往前跳至終點線
+          // ==================================================
+          // 草地背景與觀眾看台
+          ctx.fillStyle = '#1c5c28';
+          ctx.fillRect(0, 0, 270, 480);
+
+          // 上方應援看板與彩旗
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(0, 66, 270, 46);
+          for (let x = 8; x < 262; x += 18) {
+            ctx.fillStyle = (x + tick) % 36 < 18 ? '#fde047' : '#ef4444';
+            ctx.fillRect(x, 78 + (tick % 4), 8, 8);
+          }
+
+          // 橫向趣味競賽草皮賽道 (y=155 ~ 295)
+          ctx.fillStyle = '#2d8a3e';
+          ctx.fillRect(0, 155, 270, 140);
+          // 賽道上下白線
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 155, 270, 4);
+          ctx.fillRect(0, 291, 270, 4);
+
+          // 左側起點線 (START)
+          ctx.fillStyle = '#fde047';
+          ctx.fillRect(38, 175, 4, 105);
+          ctx.font = 'bold 9px "Press Start 2P", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('START', 32, 170);
+
+          // 地上排列 4 個彩色呼拉圈 (HOOP_STOPS_X[1..4])
+          const hoopY = 258;
+          for (let i = 1; i <= 4; i++) {
+            const hx = HOOP_STOPS_X[i];
+            const isCleared = state.hoopStep >= i;
+            const isNextTarget = state.hoopStep + 1 === i;
+
+            // 呼拉圈陰影
+            ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.ellipse(hx, hoopY + 3, 16, 7, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 呼拉圈本體 (已跳過發亮填滿、下一個目標閃爍提示)
+            if (isCleared) {
+              ctx.fillStyle = 'rgba(253, 224, 71, 0.35)';
+              ctx.beginPath();
+              ctx.ellipse(hx, hoopY, 16, 7, 0, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.strokeStyle = isNextTarget && (tick % 16 < 8) ? '#ffffff' : HOOP_COLORS[i - 1];
+            ctx.lineWidth = isNextTarget ? 4 : 3;
+            ctx.beginPath();
+            ctx.ellipse(hx, hoopY, 16, 7, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 圈圈編號 (1~4)
+            ctx.fillStyle = isCleared ? '#fde047' : '#ffffff';
+            ctx.font = 'bold 10px "Press Start 2P", monospace';
+            ctx.fillText(`${i}`, hx, hoopY + 21);
+          }
+
+          // 右側黑白相間終點線 (FINISH LINE, x=224)
+          const finishX = 224;
+          for (let row = 0; row < 12; row++) {
+            for (let col = 0; col < 2; col++) {
+              ctx.fillStyle = (row + col) % 2 === 0 ? '#ffffff' : '#111827';
+              ctx.fillRect(finishX + col * 5, 175 + row * 9, 5, 9);
+            }
+          }
+          // 終點線紅旗與標示
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(finishX + 2, 158, 16, 12);
+          ctx.fillStyle = '#fde047';
+          ctx.font = 'bold 9px "Press Start 2P", monospace';
+          ctx.fillText('GOAL', finishX + 5, 152);
+
+          // 計算選手跳躍拋物線座標
+          if (state.hoopAnimProg < 1) {
+            state.hoopAnimProg = Math.min(1, state.hoopAnimProg + 0.085);
+          }
+          const t = state.hoopAnimProg;
+          const currentX = state.hoopFromX + (state.hoopToX - state.hoopFromX) * t;
+          // 拋物線高度 (跳躍最高點離地 38px)
+          const jumpArcY = t < 1 ? Math.sin(t * Math.PI) * 38 : 0;
+          const currentY = 242 - jumpArcY;
+
+          // 繪製選手小人 (跳躍時呈現騰空跨步姿勢)
+          drawSideRunner(
+            ctx,
+            currentX,
+            currentY,
+            '#e03c28',
+            t < 1 ? 0 : 1,
+            false,
+            t >= 1
+          );
+
+          // 頭頂跳躍進度標籤
+          ctx.fillStyle = '#fde047';
+          ctx.font = 'bold 11px "DotGothic16", sans-serif';
+          ctx.fillText(
+            state.hoopStep >= 5 ? '🎉 衝線成功！' : `跳圈進度 ${state.hoopStep}/5`,
+            currentX,
+            currentY - 22
+          );
+
+          // 底部進度說明牌
+          ctx.fillStyle = '#111827';
+          ctx.fillRect(35, 315, 200, 26);
+          ctx.strokeStyle = '#fde047';
+          ctx.strokeRect(35, 315, 200, 26);
+          ctx.fillStyle = '#fde047';
+          ctx.font = 'bold 12px "DotGothic16", sans-serif';
+          ctx.fillText('⭕ 按擊按鈕往前跳過 4 個圈圈！', 135, 333);
+        }
+
+        state.animFrameId = requestAnimationFrame(renderRace);
+      }
+      renderRace();
+    }
+
+    function triggerQteSuccess() {
+      if (state.qteCompleted) return;
+
+      // ==================================================
+      // 第 3 關趣味競賽「跳圈圈」：每次按擊按鈕往前跳 1 格 (共 5 跳抵達終點線)
+      // ==================================================
+      if (state.raceStage === 2) {
+        if (state.hoopStep >= 5) return;
+        state.hoopFromX = HOOP_STOPS_X[state.hoopStep];
+        state.hoopStep += 1;
+        state.hoopToX = HOOP_STOPS_X[state.hoopStep];
+        state.hoopAnimProg = 0;
+
+        // 播放跳躍上升音效
+        audio.playTone(360 + state.hoopStep * 95, 0.11, 'square', 0.16);
+        state.score += 120;
+
+        // 更新進度條、狀態與按鈕文字
+        const pct = Math.round((state.hoopStep / 5) * 100);
+        document.getElementById('race-progress-bar').style.width = `${pct}%`;
+        document.getElementById('active-runner-status').textContent = `跳躍進度 ${state.hoopStep}/5`;
+
+        if (state.hoopStep < 5) {
+          const nextLabel = state.hoopStep === 4 ? '衝過終點線 GOAL! (4/5)' : `往前跳 JUMP! (${state.hoopStep}/5)`;
+          document.getElementById('qte-btn-label').textContent = nextLabel;
+          return; // 尚未跳到終點線，等待下一次按擊
+        }
+
+        // 第 5 跳成功衝過終點線！
+        document.getElementById('qte-btn-label').textContent = '衝過終點線！GOAL! (5/5)';
+        state.qteCompleted = true;
+        state.score += 500;
+        audio.playPowerUp();
+        // 顯示過關跳字
+        const callout = document.getElementById('qte-callout');
+        document.getElementById('qte-callout-text').textContent = 'HOOP JUMP CLEAR!';
+        callout.classList.remove('opacity-0');
+
+        setTimeout(() => {
+          callout.classList.add('opacity-0');
+          enterFinalScreen();
+        }, 1350);
+        return;
+      }
+
+      // 若是第2關大隊接力：手動點擊時若完全不在判定區附近，給予小提示但仍允許完成接棒以保持流暢體驗
+      const inGreenZone = state.relayLeftRunnerProg >= 42 && state.relayLeftRunnerProg <= 82;
+      if (state.raceStage === 1) {
+        state.relayBatonPassed = true;
+        document.getElementById('active-runner-name').textContent = '六甲代表隊';
+        document.getElementById('active-runner-status').textContent = '完美接棒起跑！';
+        const zoneStatus = document.getElementById('relay-zone-status');
+        if (zoneStatus) {
+          zoneStatus.textContent = inGreenZone ? 'PERFECT BATON PASS!!' : 'GOOD PASS! GO!';
+        }
+      }
+
+      state.qteCompleted = true;
+      state.score += 500;
+      audio.playPowerUp();
+
+      // 顯示過關跳字
+      const callout = document.getElementById('qte-callout');
+      const labels = [
+        'SPRINT MAX! 50米衝線!',
+        inGreenZone ? 'PERFECT PASS 完美接棒!' : 'GOOD PASS 接棒起跑!',
+        'FUN GAME CLEAR!'
+      ];
+      document.getElementById('qte-callout-text').textContent = labels[state.raceStage];
+      callout.classList.remove('opacity-0');
+      document.getElementById('race-progress-bar').style.width = '100%';
+
+      setTimeout(() => {
+        callout.classList.add('opacity-0');
+        if (state.raceStage < RACE_CONFIGS.length - 1) {
+          loadRaceStage(state.raceStage + 1);
+        } else {
+          enterFinalScreen();
+        }
+      }, 1350);
+    }
+
+    /**
+     * 9. 畫面 6：最終決戰確認與活動資訊邀請卡
+     */
+    function enterFinalScreen() {
+      showScreen('screen-final');
+      audio.playFanfare();
+
+      document.getElementById('final-challenge-prompt').classList.remove('hidden');
+      document.getElementById('final-invite-card').classList.add('hidden');
+      document.getElementById('final-score-badge').textContent = `RANK S • ${state.score} PTS`;
+
+      startConfettiAnimation();
+      startCountdownTimer();
+
+      // 自動演繹模式自動點擊 YES 展示活動資訊卡
+      addAutoTimer(() => {
+        acceptFinalChallenge();
+      }, 2200);
+    }
+
+    function acceptFinalChallenge() {
+      audio.playSelect();
+      document.getElementById('final-challenge-prompt').classList.add('hidden');
+      document.getElementById('final-invite-card').classList.remove('hidden');
+
+      // 若是自動演繹模式，跑完後解除自動標記並提示完成
+      if (state.autoPlay) {
+        addAutoTimer(() => {
+          state.autoPlay = false;
+          document.getElementById('autoplay-badge').classList.add('hidden');
+          document.getElementById('autoplay-badge').classList.remove('flex');
+          showToast('🎬 導演自動演繹完成！', '你可以停止螢幕錄影，或點擊下方按鈕體驗手動互動！');
+        }, 3500);
+      }
+    }
+
+    function startConfettiAnimation() {
+      const canvas = document.getElementById('canvas-confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 270;
+      canvas.height = 480;
+
+      const particles = Array.from({ length: 45 }, () => ({
+        x: Math.random() * 270,
+        y: Math.random() * 480,
+        size: 4 + Math.random() * 4,
+        speedY: 1.5 + Math.random() * 2.5,
+        color: ['#ffcc00', '#ef4444', '#2ea843', '#38bdf8', '#ffffff'][Math.floor(Math.random() * 5)]
+      }));
+
+      function renderConfetti() {
+        if (state.currentScreen !== 'screen-final') return;
+        ctx.clearRect(0, 0, 270, 480);
+        particles.forEach(p => {
+          p.y += p.speedY;
+          if (p.y > 480) {
+            p.y = -10;
+            p.x = Math.random() * 270;
+          }
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        requestAnimationFrame(renderConfetti);
+      }
+      renderConfetti();
+    }
+
+    let countdownInterval = null;
+    function startCountdownTimer() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      // 設定目標日期為 115/12/12 (西元 2026-12-12 08:30:00)
+      const targetDate = new Date('2026-12-12T08:30:00').getTime();
+
+      function updateClock() {
+        const now = Date.now();
+        let diff = Math.max(0, targetDate - now);
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / (1000 * 60)) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+
+        const pad = n => String(n).padStart(2, '0');
+        document.getElementById('countdown-display').textContent =
+          `${pad(days)}D ${pad(hours)}H ${pad(mins)}M ${pad(secs)}S`;
+      }
+      updateClock();
+      countdownInterval = setInterval(updateClock, 1000);
+    }
+
+    function showToast(title, msg) {
+      const toast = document.getElementById('custom-toast');
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+
+    /**
+     * 10. 啟動流程與所有按鈕/鍵盤事件綁定
+     */
+    let replayFallbackTimer = null;
+    let mapZoomTimer = null;
+    let isMapZooming = false;
+
+    function zoomToMapNode(nodeEl, callback) {
+      const layer = document.getElementById('map-zoom-layer');
+      if (!layer || !nodeEl) {
+        if (typeof callback === 'function') callback();
+        return;
+      }
+      if (isMapZooming) return;
+      isMapZooming = true;
+      audio.playSelect();
+
+      const layerRect = layer.getBoundingClientRect();
+      const nodeRect = nodeEl.getBoundingClientRect();
+      const originX = layerRect.width ? ((nodeRect.left + nodeRect.width / 2 - layerRect.left) / layerRect.width) * 100 : 50;
+      const originY = layerRect.height ? ((nodeRect.top + nodeRect.height / 2 - layerRect.top) / layerRect.height) * 100 : 50;
+
+      layer.style.transformOrigin = `${originX.toFixed(1)}% ${originY.toFixed(1)}%`;
+      layer.style.transform = 'scale(2.35)';
+
+      if (mapZoomTimer) clearTimeout(mapZoomTimer);
+      mapZoomTimer = setTimeout(() => {
+        isMapZooming = false;
+        mapZoomTimer = null;
+        if (typeof callback === 'function') callback();
+      }, 520);
+    }
+
+    function resetMapZoom() {
+      if (mapZoomTimer) {
+        clearTimeout(mapZoomTimer);
+        mapZoomTimer = null;
+      }
+      isMapZooming = false;
+      const layer = document.getElementById('map-zoom-layer');
+      if (layer) {
+        layer.style.transform = 'scale(1)';
+      }
+    }
+
+    function showMapReplayCue(key) {
+      const node = document.getElementById(`map-node-${key}`);
+      const cue = document.getElementById('map-replay-cue');
+      if (!node || !cue) return;
+      audio.playSelect();
+      node.classList.add('scale-110', 'transition');
+      cue.style.left = `${node.offsetLeft + node.offsetWidth / 2 - 42}px`;
+      cue.style.top = `${Math.max(56, node.offsetTop - 32)}px`;
+      cue.classList.remove('hidden');
+    }
+
+    function hideMapReplayCue() {
+      document.getElementById('map-replay-cue')?.classList.add('hidden');
+      document.querySelectorAll('.map-node').forEach(n => n.classList.remove('scale-110'));
+    }
+
+    function updateTrophySlots() {
+      ['hist69', 'hist70'].forEach((k) => {
+        const slot = document.getElementById(`trophy-slot-${k}`);
+        if (!slot) return;
+        const icon = slot.querySelector('.trophy-icon');
+        if (state.viewedHistory.has(k)) {
+          slot.classList.remove('border-dashed', 'border-gray-500', 'bg-black/50');
+          slot.classList.add('border-solid', 'border-yellow-400', 'bg-yellow-950/50');
+          icon?.classList.remove('opacity-25');
+          icon?.classList.add('opacity-100', 'scale-110', 'transition');
+        } else {
+          slot.classList.add('border-dashed', 'border-gray-500', 'bg-black/50');
+          slot.classList.remove('border-solid', 'border-yellow-400', 'bg-yellow-950/50');
+          icon?.classList.add('opacity-25');
+          icon?.classList.remove('opacity-100', 'scale-110');
+        }
+      });
+    }
+
+    function openStage71Menu() {
+      const modal = document.getElementById('stage71-menu-modal');
+      if (!modal) return;
+
+      document.getElementById('check-stage71-class')?.classList.toggle('hidden', !state.teamLoggedIn);
+      document.getElementById('check-stage71-levelup')?.classList.toggle('hidden', !state.trainingDone);
+
+      const cClass = document.getElementById('cursor-stage71-class');
+      const cLevel = document.getElementById('cursor-stage71-levelup');
+      const cChal = document.getElementById('cursor-stage71-challenge');
+      [cClass, cLevel, cChal].forEach(el => el?.classList.add('opacity-0'));
+
+      if (!state.teamLoggedIn) {
+        cClass?.classList.remove('opacity-0');
+      } else if (!state.trainingDone) {
+        cLevel?.classList.remove('opacity-0');
+      } else {
+        cChal?.classList.remove('opacity-0');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeStage71Menu(silent = false) {
+      if (!silent) audio.playAction();
+      document.getElementById('stage71-menu-modal')?.classList.add('hidden');
+      resetMapZoom();
+    }
+
+    function finishTeamSelectionAndReturnToMap() {
+      state.teamLoggedIn = true;
+      audio.playSelect();
+      showScreen('screen-map');
+      drawStageMapCanvas();
+      resetMapZoom();
+      openStage71Menu();
+
+      if (state.autoPlay) {
+        addAutoTimer(() => {
+          closeStage71Menu(true);
+          startTrainingScreen();
+        }, 1000);
+      }
+    }
+
+    function finishTrainingAndReturnToMap() {
+      state.trainingDone = true;
+      showScreen('screen-map');
+      drawStageMapCanvas();
+      resetMapZoom();
+      openStage71Menu();
+
+      if (state.autoPlay) {
+        addAutoTimer(() => {
+          closeStage71Menu(true);
+          startRaceSeries();
+        }, 1100);
+      }
+    }
+
+    function startGameFlow(isAutoPlay = false) {
+      clearAutoTimers();
+      closeHistoryModal(true);
+      closeStage71Menu(true);
+      hideMapReplayCue();
+      resetMapZoom();
+      state.autoPlay = isAutoPlay;
+      state.score = 8500;
+      state.teamLoggedIn = false;
+      state.trainingDone = false;
+      state.viewedHistory = new Set();
+      audio.playSelect();
+      audio.startBGM();
+
+      const badge = document.getElementById('autoplay-badge');
+      if (isAutoPlay) {
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+      } else {
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
+      }
+
+      // 進入地圖畫面
+      showScreen('screen-map');
+      drawStageMapCanvas();
+
+      // 若為自動演繹模式：依序放大聚焦並播放 69週年紅白大對抗 -> 70週年庄情薪傳接力賽 -> 71週年五力飛揚開啟 CLASS/LEVEL UP/CHALLENGE 選單
+      if (isAutoPlay) {
+        addAutoTimer(() => showMapReplayCue('hist69'), 500);
+        addAutoTimer(() => {
+          hideMapReplayCue();
+          zoomToMapNode(document.getElementById('map-node-hist69'), () => {
+            openHistoryModal('hist69', () => {
+              addAutoTimer(() => showMapReplayCue('hist70'), 400);
+              addAutoTimer(() => {
+                hideMapReplayCue();
+                zoomToMapNode(document.getElementById('map-node-hist70'), () => {
+                  openHistoryModal('hist70', () => {
+                    addAutoTimer(() => {
+                      zoomToMapNode(document.getElementById('btn-map-2026'), () => {
+                        openStage71Menu();
+                        addAutoTimer(() => {
+                          closeStage71Menu(true);
+                          showScreen('screen-team');
+                          initTeamScreen();
+                        }, 900);
+                      });
+                    }, 400);
+                  });
+                });
+              }, 1100);
+            });
+          });
+        }, 1200);
+      }
+    }
+
+    function openHistoryModal(key, onComplete = null) {
+      const data = HISTORY_DATA[key];
+      if (!data) return;
+      if (replayFallbackTimer) {
+        clearTimeout(replayFallbackTimer);
+        replayFallbackTimer = null;
+      }
+
+      state.viewedHistory.add(key);
+      audio.playSelect();
+
+      document.getElementById('replay-year-badge').textContent = data.year;
+      document.getElementById('replay-title-badge').textContent = data.shortTitle;
+      document.getElementById('tv-year-title').textContent = data.title;
+      document.getElementById('tv-desc').textContent = data.desc;
+
+      const trophyBox = document.getElementById('replay-trophy-box');
+      trophyBox.classList.add('hidden');
+      document.getElementById('retro-tv-modal').classList.remove('hidden');
+
+      const video = document.getElementById('replay-video');
+      let trophyShown = false;
+
+      const revealTrophyBox = () => {
+        if (trophyShown) return;
+        trophyShown = true;
+        if (replayFallbackTimer) {
+          clearTimeout(replayFallbackTimer);
+          replayFallbackTimer = null;
+        }
+        updateTrophySlots();
+        trophyBox.classList.remove('hidden');
+        audio.playPowerUp();
+        if (typeof onComplete === 'function') {
+          addAutoTimer(() => {
+            closeHistoryModal(true);
+            onComplete();
+          }, 1800);
+        }
+      };
+
+      video.onended = revealTrophyBox;
+      video.onerror = revealTrophyBox;
+      video.src = data.videoSrc;
+      video.currentTime = 0;
+      video.muted = audio.muted;
+      video.play().catch(() => {
+        video.muted = true;
+        video.play().catch(revealTrophyBox);
+      });
+
+      // 安全保險計時器，避免影片載入失敗或自動播放受阻時卡住流程
+      replayFallbackTimer = setTimeout(revealTrophyBox, 6500);
+    }
+
+    function closeHistoryModal(silent = false) {
+      if (!silent) audio.playAction();
+      if (replayFallbackTimer) {
+        clearTimeout(replayFallbackTimer);
+        replayFallbackTimer = null;
+      }
+      const video = document.getElementById('replay-video');
+      if (video) {
+        video.onended = null;
+        video.onerror = null;
+        video.pause();
+      }
+      document.getElementById('replay-trophy-box')?.classList.add('hidden');
+      document.getElementById('retro-tv-modal').classList.add('hidden');
+      resetMapZoom();
+    }
+
+    // 綁定 DOM 事件
+    window.addEventListener('DOMContentLoaded', () => {
+      drawTitleBackground();
+
+      // 主畫面按鈕
+      document.getElementById('btn-start-manual').addEventListener('click', () => startGameFlow(false));
+      document.getElementById('btn-start-auto').addEventListener('click', () => startGameFlow(true));
+
+      // 頂部工具列
+      document.getElementById('btn-home').addEventListener('click', () => {
+        clearAutoTimers();
+        closeHistoryModal(true);
+        closeStage71Menu(true);
+        hideMapReplayCue();
+        resetMapZoom();
+        state.autoPlay = false;
+        document.getElementById('autoplay-badge').classList.add('hidden');
+        showScreen('screen-title');
+      });
+
+      document.getElementById('btn-crt').addEventListener('click', (e) => {
+        const crt = document.getElementById('crt-layer');
+        crt.classList.toggle('crt-off');
+        const isOff = crt.classList.contains('crt-off');
+        e.target.textContent = isOff ? 'CRT:OFF' : 'CRT:ON';
+      });
+
+      document.getElementById('btn-sound').addEventListener('click', (e) => {
+        const muted = audio.toggleMute();
+        const replayVideo = document.getElementById('replay-video');
+        if (replayVideo) replayVideo.muted = muted;
+        e.target.textContent = muted ? '🔇' : '🔊';
+      });
+
+      // 地圖節點點擊（先放大聚焦建築物，再進入對應畫面或開啟選單）
+      document.querySelectorAll('.map-node').forEach(node => {
+        node.addEventListener('click', () => {
+          const target = node.getAttribute('data-node');
+          zoomToMapNode(node, () => {
+            if (target === 'hist69' || target === 'hist70') {
+              openHistoryModal(target);
+            } else {
+              openStage71Menu();
+            }
+          });
+        });
+      });
+
+      document.getElementById('btn-close-tv').addEventListener('click', () => closeHistoryModal(false));
+      document.getElementById('btn-tv-confirm').addEventListener('click', () => closeHistoryModal(false));
+
+      // 71週年 五力飛揚 選單按鈕 (CLASS / LEVEL UP / CHALLENGE)
+      document.getElementById('btn-close-stage71-menu').addEventListener('click', () => closeStage71Menu(false));
+      document.getElementById('cmd-stage71-class').addEventListener('click', () => {
+        audio.playSelect();
+        closeStage71Menu(true);
+        showScreen('screen-team');
+        initTeamScreen();
+      });
+      document.getElementById('cmd-stage71-levelup').addEventListener('click', () => {
+        audio.playSelect();
+        closeStage71Menu(true);
+        startTrainingScreen();
+      });
+      document.getElementById('cmd-stage71-challenge').addEventListener('click', () => {
+        audio.playSelect();
+        closeStage71Menu(true);
+        startRaceSeries();
+      });
+
+      // 選手圖鑑確認返回大地圖
+      document.getElementById('btn-team-next').addEventListener('click', finishTeamSelectionAndReturnToMap);
+
+      // 訓練小遊戲按鈕
+      document.getElementById('btn-train-mash').addEventListener('click', handleTrainingMash);
+      document.getElementById('btn-train-timing').addEventListener('click', handleTimingStop);
+
+      // 賽事 QTE 按鈕
+      document.getElementById('btn-qte-action').addEventListener('click', triggerQteSuccess);
+
+      // 結尾確認與邀請卡按鈕
+      document.getElementById('btn-accept-yes').addEventListener('click', acceptFinalChallenge);
+
+      document.getElementById('btn-register').addEventListener('click', () => {
+        audio.playPowerUp();
+        showToast('🎉 71大庄校慶運動會 應援成功！', '一甲～六戊 全體師生期待你的熱情喝采，115/12/12 見！');
+      });
+
+      // 電腦鍵盤快捷鍵支援 (A / B / V / Enter / Space)
+      window.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        if (state.currentScreen === 'screen-title' && (key === 'a' || key === 'enter' || key === ' ')) {
+          startGameFlow(false);
+        } else if (state.currentScreen === 'screen-team' && (key === 'a' || key === 'enter')) {
+          finishTeamSelectionAndReturnToMap();
+        } else if (state.currentScreen === 'screen-training') {
+          if (!document.getElementById('train-phase-1').classList.contains('hidden') && (key === 'a' || key === ' ')) {
+            handleTrainingMash();
+          } else if (!document.getElementById('train-phase-2').classList.contains('hidden') && (key === 'b' || key === ' ')) {
+            handleTimingStop();
+          }
+        } else if (state.currentScreen === 'screen-race' && (key === 'a' || key === 'b' || key === 'v' || key === ' ')) {
+          triggerQteSuccess();
+        } else if (state.currentScreen === 'screen-final' && (key === 'a' || key === 'enter')) {
+          if (!document.getElementById('final-challenge-prompt').classList.contains('hidden')) {
+            acceptFinalChallenge();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
